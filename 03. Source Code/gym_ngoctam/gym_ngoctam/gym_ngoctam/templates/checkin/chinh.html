@@ -1,0 +1,38 @@
+{% extends "app_base.html" %}
+{% block title %}Check-in{% endblock %}
+{% block page %}
+<h1 class="page-title">Phòng Gym NT</h1>
+<main class="content" data-so-cho="{{ so_cho }}" data-url-so-cho="{% url 'checkin_so_cho' %}" id="checkin-chinh">
+  <section class="info-card block-card">
+    <h3>Yêu cầu check-in</h3>
+    {% if so_cho %}
+    <p>Có {{ so_cho }} lượt yêu cầu đang chờ.</p>
+    <a class="btn btn-primary btn-block" href="{% url 'checkin_xac_nhan' yc_dau.pk %}">Xem và xác nhận</a>
+    {% else %}
+    <p style="margin:0">Chưa có yêu cầu nào đang chờ.</p>
+    {% endif %}
+  </section>
+  <section class="info-card block-card">
+    <h3>Khách vãng lai</h3>
+    <p>Khách mua vé tập lẻ không cần quét QR hay khai báo thông tin.</p>
+    <a class="btn btn-primary btn-block" href="{% url 've_le' %}">Bán vé lẻ - 40.000đ</a>
+  </section>
+  <section class="info-card block-card">
+    <h3>Lịch sử check-in</h3>
+    <p>Tra cứu các lượt check-in theo ngày, tên hoặc SĐT.</p>
+    <a class="btn btn-outline btn-block" href="{% url 'checkin_lich_su' %}">Xem lịch sử check-in</a>
+  </section>
+  <p class="note" style="text-align:center;margin-top:8px">Trang cho hội viên quét QR: <b>{{ request.scheme }}://{{ request.get_host }}{% url 'khach_checkin' %}</b></p>
+</main>
+<script>
+// Tự cập nhật khi có yêu cầu check-in mới
+(function () {
+  var m = document.getElementById("checkin-chinh");
+  setInterval(function () {
+    fetch(m.dataset.urlSoCho).then(function (r) { return r.json(); }).then(function (d) {
+      if (String(d.so_cho) !== m.dataset.soCho) location.reload();
+    }).catch(function () {});
+  }, 4000);
+})();
+</script>
+{% endblock %}

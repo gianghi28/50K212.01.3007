@@ -1,0 +1,62 @@
+{% extends "app_base.html" %}
+{% load ui %}
+{% block title %}Chỉnh sửa gói tập{% endblock %}
+{% block page %}
+<h1 class="page-title">Chỉnh sửa gói tập</h1>
+<form method="post" id="form-sua" novalidate>
+  {% csrf_token %}
+  <main class="content has-footer">
+    <div class="field">
+      <label>Tên gói</label>
+      <input class="input" value="{{ goi|ten_goi }} · không chỉnh sửa" readonly tabindex="-1">
+    </div>
+    <div class="field">
+      <label>Thời hạn</label>
+      <input class="input" value="{{ goi.thoiHan }} ngày · không chỉnh sửa" readonly tabindex="-1">
+    </div>
+    <div class="field">
+      <label>Thời hạn bảo lưu</label>
+      <input class="input" value="{{ goi.thoiHanBaoLuu|default:0 }} ngày · không chỉnh sửa" readonly tabindex="-1">
+    </div>
+    <div class="field {% if form.gia.errors %}has-error{% endif %}">
+      <label for="gia">Giá (VNĐ)</label>
+      <input class="input" id="gia" name="gia" inputmode="numeric" placeholder="Nhập giá" value="{{ form.gia.value|default:'' }}">
+      {% for e in form.gia.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+    <div class="switch-row">
+      <span>Trạng thái: <b id="tt-label" class="{% if not dang_ban %}off{% endif %}">{% if dang_ban %}Đang bán{% else %}Ngừng bán{% endif %}</b></span>
+      <label class="switch">
+        <input type="checkbox" name="dangBan" {% if dang_ban %}checked{% endif %} data-switch-label="tt-label" data-on="Đang bán" data-off="Ngừng bán">
+        <span class="track"></span>
+      </label>
+    </div>
+  </main>
+  <div class="footer-actions btn-row">
+    <a class="btn btn-outline" href="{% url 'goi_tap_chi_tiet' goi.pk %}">Hủy</a>
+    <button type="submit" class="btn btn-primary">Xác nhận</button>
+  </div>
+
+  {% if hoi_xac_nhan %}
+  <div class="overlay">
+    <div class="modal left">
+      <h3>Ngừng bán gói này?</h3>
+      <p>{{ goi|ten_goi }} sẽ không còn hiển thị để đăng ký mới. {{ so_dang_dung }} hội viên đang dùng gói vẫn sử dụng đến hết hạn.</p>
+      <div class="btn-row">
+        <button type="button" class="btn btn-outline" data-close>Hủy</button>
+        <button type="submit" class="btn btn-danger" name="xac_nhan_ngung" value="1">Ngừng bán</button>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</form>
+{% endblock %}
+
+{% block modals %}
+{% if thanh_cong %}
+  {% url 'goi_tap_chi_tiet' goi.pk as link_ct %}
+  {% with ten=goi|ten_goi %}
+  {% include "partials/modal_thanh_cong.html" with tieu_de="Cập nhật gói tập thành công" noi_dung=ten|add:" đã được cập nhật" link_dong=link_ct %}
+  {% endwith %}
+{% endif %}
+{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}
+{% endblock %}

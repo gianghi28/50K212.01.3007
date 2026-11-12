@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Xóa hội viên{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Xóa hội viên?</h1>
+  <p>Bạn chắc chắn muốn xóa <b>{{ object.hoTen }}</b> ({{ object.maHV }})? Thao tác này không hoàn tác được.</p>
+  <form method="post" class="form-actions">
+    {% csrf_token %}
+    <a class="btn" href="{% url 'hoi_vien_list' %}">Hủy</a>
+    <button type="submit" class="btn danger-solid">Xóa</button>
+  </form>
+</div>
+{% endblock %}

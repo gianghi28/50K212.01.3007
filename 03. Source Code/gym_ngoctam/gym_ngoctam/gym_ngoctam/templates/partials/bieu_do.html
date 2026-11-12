@@ -1,0 +1,10 @@
+{# Biểu đồ cột: cot = [{nhan, hien_thi, pct}] #}
+<div class="chart" style="--n: {{ cot|length }}">
+  {% for c in cot %}
+  <div class="bar-col">
+    <span class="bar-val">{{ c.hien_thi }}</span>
+    <div class="bar" style="height: {% if c.pct %}{{ c.pct }}%{% else %}2px{% endif %}"></div>
+  </div>
+  {% endfor %}
+</div>
+<div class="chart-x" style="--n: {{ cot|length }}">{% for c in cot %}<span>{{ c.nhan }}</span>{% endfor %}</div>

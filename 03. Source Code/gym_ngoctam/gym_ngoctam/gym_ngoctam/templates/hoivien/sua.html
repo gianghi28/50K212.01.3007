@@ -1,0 +1,89 @@
+{% extends "app_base.html" %}
+{% load ui %}
+{% block title %}Chỉnh sửa thông tin hội viên{% endblock %}
+{% block page %}
+<h1 class="page-title">Chỉnh sửa thông tin hội viên</h1>
+<form method="post" novalidate>
+  {% csrf_token %}
+  <main class="content has-footer">
+    {% if dang_bao_luu %}<div class="banner">Hội viên đang bảo lưu, không thể đăng ký gói tập.</div>{% endif %}
+
+    <div class="field">
+      <label>Mã HV</label>
+      <input class="input" value="{{ hv.maHV }} · không chỉnh sửa" readonly tabindex="-1">
+    </div>
+    <div class="field {% if form.hoTen.errors %}has-error{% endif %}">
+      <label for="hoTen">Họ tên</label>
+      <input class="input" id="hoTen" name="hoTen" placeholder="Nhập họ tên" value="{{ form.hoTen.value|default:'' }}">
+      {% for e in form.hoTen.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+    <div class="field {% if form.soDienThoai.errors %}has-error{% endif %}">
+      <label for="soDienThoai">SĐT</label>
+      <input class="input" id="soDienThoai" name="soDienThoai" inputmode="numeric" placeholder="Nhập số điện thoại" value="{{ form.soDienThoai.value|default:'' }}">
+      {% for e in form.soDienThoai.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div id="ht-fields" {% if dk_moi %}hidden{% endif %}>
+      <div class="field">
+        <label>Gói tập hiện tại</label>
+        <input class="input" readonly tabindex="-1" value="{% if dk %}{{ dk.goiTap|ten_goi }}{% if hv.trang_thai == 'Hết hạn' %} · Hết hạn{% endif %}{% else %}Chưa có gói{% endif %}">
+      </div>
+      <div class="field">
+        <label>Số ngày còn lại</label>
+        <input class="input {% if hv.so_ngay_con_lai <= 0 %}is-red{% endif %}" readonly tabindex="-1" value="{{ hv.so_ngay_con_lai }}{% if hv.so_ngay_con_lai > 0 %} ngày{% endif %}">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Chọn gói</label>
+      <input type="hidden" name="maGoi" id="maGoi" value="{{ goi_chon.pk|default:'' }}">
+      <button type="button" class="select-btn {% if goi_chon %}is-chosen{% endif %}" id="btn-chon-goi" {% if dang_bao_luu %}disabled{% endif %}>
+        <span id="goi-label">{% if dang_bao_luu %}Không thể chọn khi đang bảo lưu{% elif goi_chon %}{{ goi_chon|ten_goi }}{% else %}Chọn gói{% endif %}</span><span class="caret"></span>
+      </button>
+    </div>
+
+    <div class="amber-box" id="box-dang-ky" {% if not dk_moi %}hidden{% endif %}>
+      <h4 id="dk-tieu-de">{{ dk_moi.tieu_de }}</h4>
+      <div class="kv"><span>Gói hiện tại</span><b id="dk-goi-ht">{{ dk_moi.goi_ht_text }}</b></div>
+      <div class="kv"><span>Gói mới</span><b id="dk-goi-moi">{{ dk_moi.goi_moi_text }}</b></div>
+      <div class="kv"><span>Số ngày còn lại mới</span><b id="dk-so-ngay">{{ dk_moi.so_ngay_text }}</b></div>
+      <div class="kv"><span>Cần thanh toán</span><b id="dk-tien">{% if dk_moi %}{{ dk_moi.so_tien|vnd }} VNĐ{% endif %}</b></div>
+    </div>
+
+    <label class="check-row {% if loi_bao_luu %}is-error{% elif tick or dang_bao_luu %}is-active{% endif %}">
+      <span>Bảo lưu gói tập</span>
+      <input type="checkbox" name="baoLuu" id="baoLuu" {% if tick %}checked{% endif %}
+             data-dang-bao-luu="{% if dang_bao_luu %}1{% else %}0{% endif %}" data-loi="{{ loi_dieu_kien_bao_luu }}">
+    </label>
+    <p class="err" id="bl-err" {% if loi_bao_luu %}data-server="1"{% else %}hidden{% endif %}>{{ loi_bao_luu }}</p>
+
+    {% if not dang_bao_luu %}
+    <div class="amber-box" id="box-bao-luu" style="margin-top:14px" {% if not tick or loi_bao_luu %}hidden{% endif %}>
+      <div class="kv"><span>Thời hạn bảo lưu (theo gói):</span><b>{{ bao_luu_so_ngay }} ngày</b></div>
+      <div class="kv"><span>Bảo lưu đến ngày:</span><b>{{ bao_luu_den|date:"d/m/Y" }}</b></div>
+      <p class="note">Hệ thống tự động tính theo gói đã đăng ký</p>
+    </div>
+    {% else %}
+    <div class="amber-box" id="box-ket-thuc" style="margin-top:14px" {% if tick %}hidden{% endif %}>
+      <div class="kv"><span>Số ngày bảo lưu đã dùng:</span><b>{{ da_dung }} ngày</b></div>
+      <div class="kv"><span>Ngày kết thúc mới:</span><b>{{ ket_thuc_moi|date:"d/m/Y" }}</b></div>
+    </div>
+    {% endif %}
+  </main>
+  <div class="footer-actions btn-row">
+    <a class="btn btn-outline" href="{% url 'hoi_vien_chi_tiet' hv.pk %}">Hủy</a>
+    <button type="submit" class="btn btn-primary">Xác nhận</button>
+  </div>
+</form>
+{% endblock %}
+
+{% block modals %}
+{% with ma_dang_dung=dk.goiTap_id %}{% include "partials/sheet_goi.html" %}{% endwith %}
+{% if thanh_cong %}
+  {% url 'hoi_vien_chi_tiet' hv.pk as link_ct %}
+  {% with nd="Thông tin hội viên "|add:hv.hoTen|add:" đã được lưu." %}
+  {% include "partials/modal_thanh_cong.html" with tieu_de="Cập nhật thành công" noi_dung=nd link_dong=link_ct %}
+  {% endwith %}
+{% endif %}
+{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}
+{% endblock %}

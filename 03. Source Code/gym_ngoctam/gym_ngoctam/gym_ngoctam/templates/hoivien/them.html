@@ -1,0 +1,66 @@
+{% extends "app_base.html" %}
+{% load ui %}
+{% block title %}Thêm hội viên{% endblock %}
+{% block page %}
+<h1 class="page-title">Thêm hội viên</h1>
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <main class="content has-footer">
+    <div class="photo-pick {% if form.anh_tam.errors %}has-error{% endif %}">
+      <button type="button" class="photo-circle" id="btn-anh" aria-label="Thêm ảnh hội viên">
+        <img class="preview" id="anh-preview" {% if anh_tam %}src="/media/tam/{{ anh_tam }}"{% else %}hidden{% endif %} alt="">
+        <svg id="anh-icon" {% if anh_tam %}style="display:none"{% endif %} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.3l1.5-2h7.4l1.5 2h2.3A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        <span class="plus">+</span>
+      </button>
+      <input type="hidden" name="anh_tam" value="{{ anh_tam }}">
+      <div class="photo-label" id="anh-label">{% if form.anh_tam.errors %}{{ form.anh_tam.errors.0 }}{% elif anh_tam %}Đổi ảnh hội viên <span class="star">*</span>{% else %}Thêm ảnh hội viên <span class="star">*</span>{% endif %}</div>
+    </div>
+
+    <div class="field">
+      <label>Mã HV</label>
+      <input class="input" value="[Tự động tạo] · không nhập" readonly tabindex="-1">
+    </div>
+    <div class="field {% if form.hoTen.errors %}has-error{% endif %}">
+      <label for="hoTen">Họ tên</label>
+      <input class="input" id="hoTen" name="hoTen" placeholder="Nhập họ tên" value="{{ form.hoTen.value|default:'' }}">
+      {% for e in form.hoTen.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+    <div class="field {% if form.soDienThoai.errors %}has-error{% endif %}">
+      <label for="soDienThoai">SĐT</label>
+      <input class="input" id="soDienThoai" name="soDienThoai" inputmode="numeric" placeholder="Nhập số điện thoại" value="{{ form.soDienThoai.value|default:'' }}">
+      {% for e in form.soDienThoai.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+    <div class="field {% if form.maGoi.errors %}has-error{% endif %}">
+      <label>Gói tập</label>
+      <input type="hidden" name="maGoi" id="maGoi" value="{{ goi_chon.pk|default:'' }}">
+      <button type="button" class="select-btn" id="btn-chon-goi"><span id="goi-label">{% if goi_chon %}{{ goi_chon|ten_goi }}{% else %}Chọn gói{% endif %}</span><span class="caret"></span></button>
+      {% for e in form.maGoi.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+  </main>
+  <div class="footer-actions btn-row">
+    <a class="btn btn-outline" href="{% url 'hoi_vien_list' %}">Hủy</a>
+    <button type="submit" class="btn btn-primary">Lưu</button>
+  </div>
+
+  <div class="overlay sheet-overlay" id="sheet-anh" hidden>
+    <div class="sheet">
+      <div class="grabber"></div>
+      <h3>Thêm ảnh hội viên</h3>
+      <p class="sheet-sub">Ảnh rõ mặt, định dạng JPG hoặc PNG, tối đa 5 MB.</p>
+      <label class="sheet-action"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.3l1.5-2h7.4l1.5 2h2.3A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.5"/></svg></span>Chụp ảnh<input type="file" name="anh" accept="image/jpeg,image/png" capture="user"></label>
+      <label class="sheet-action"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg></span>Chọn ảnh từ thư viện<input type="file" name="anh" accept="image/jpeg,image/png"></label>
+      <button type="button" class="btn btn-outline btn-block" data-close style="margin-top:12px">Hủy</button>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block modals %}
+{% with ma_dang_dung="" %}{% include "partials/sheet_goi.html" %}{% endwith %}
+{% if hv_moi %}
+  {% url 'hoi_vien_list' as link_ds %}
+  {% with nd=hv_moi.hoTen|add:" ("|add:hv_moi.maHV|add:") đã được thêm vào hệ thống." %}
+  {% include "partials/modal_thanh_cong.html" with tieu_de="Thêm hội viên thành công" noi_dung=nd link_dong=link_ds %}
+  {% endwith %}
+{% endif %}
+{% endblock %}

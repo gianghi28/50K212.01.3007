@@ -1,0 +1,24 @@
+{% extends "taikhoan/base.html" %}
+{% block title %}Đặt mật khẩu mới{% endblock %}
+{% block page %}
+<h1 class="page-title auth-title">Đặt mật khẩu mới</h1>
+<main class="content">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <h2 class="auth-h2" style="margin-bottom:16px">Tạo mật khẩu mới</h2>
+    <div class="field {% if loi_mk %}has-error{% endif %}">
+      <label class="label-strong">Mật khẩu mới</label>
+      <div class="icon-input"><svg viewBox="0 0 24 24" fill="none" stroke="#282019" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><input class="input" type="password" name="mk" placeholder="Nhập mật khẩu mới" autocomplete="new-password"></div>
+      {% if loi_mk %}<p class="err" style="margin-left:0">{{ loi_mk }}</p>{% endif %}
+    </div>
+    <div class="field {% if loi_xn %}has-error{% endif %}">
+      <label class="label-strong">Xác nhận mật khẩu mới</label>
+      <div class="icon-input"><svg viewBox="0 0 24 24" fill="none" stroke="#282019" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><input class="input" type="password" name="xn" placeholder="Nhập lại mật khẩu mới" autocomplete="new-password"></div>
+      {% if loi_xn %}<p class="err" style="margin-left:0">{{ loi_xn }}</p>{% endif %}
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Đặt lại mật khẩu</button>
+    <a class="link-btn" style="text-align:center" href="{% url 'login' %}">Quay lại đăng nhập</a>
+  </form>
+</main>
+{% endblock %}
+{% block modals %}{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}{% endblock %}

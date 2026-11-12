@@ -1,0 +1,43 @@
+{% extends "app_base.html" %}
+{% block title %}Bán vé lẻ{% endblock %}
+{% block page %}
+<h1 class="page-title">Bán vé lẻ</h1>
+<form method="post">
+  {% csrf_token %}
+  <main class="content has-footer">
+    {% if tien_mat %}
+    <section class="info-card" style="text-align:center">
+      <h4 style="font-size:15px;margin:0 0 6px">Thu tiền mặt</h4>
+      <div class="money" style="font-size:30px">{{ gia }}đ</div>
+      <p class="note" style="margin-top:6px">Vui lòng thu tiền của khách rồi nhấn "Đã thu tiền".</p>
+    </section>
+    <section class="info-card" style="margin-top:14px">
+      <div class="kv"><span>Loại vé</span><b>Vé lẻ 1 ngày</b></div>
+      <div class="kv"><span>Hình thức</span><b>Tiền mặt</b></div>
+    </section>
+    {% else %}
+    <section class="info-card qr-box">
+      <h4>Quét mã để thanh toán</h4>
+      <div class="qr-frame"><img src="{{ link_qr }}" alt="Mã QR thanh toán vé lẻ"></div>
+      <div class="money" style="font-size:30px;margin-top:12px">{{ gia }}đ</div>
+      <p class="qr-caption" style="font-size:13px">Đang chờ khách chuyển khoản</p>
+    </section>
+    {% endif %}
+  </main>
+  <div class="footer-actions btn-row">
+    <button type="button" class="btn btn-outline" id="btn-huy-tt">Hủy</button>
+    <button type="submit" class="btn btn-primary">{% if tien_mat %}Đã thu tiền{% else %}Đã nhận tiền{% endif %}</button>
+  </div>
+  <div class="overlay" id="modal-huy-tt" hidden>
+    <div class="modal left">
+      <h3>Hủy thanh toán?</h3>
+      <p>Vé lẻ sẽ không được ghi nhận. Bạn sẽ quay về mục Check-in.</p>
+      <div class="btn-row">
+        <button type="button" class="btn btn-outline" data-close>Quay lại</button>
+        <button type="submit" class="btn btn-danger" name="huy" value="1">Hủy thanh toán</button>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+{% block modals %}{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}{% endblock %}

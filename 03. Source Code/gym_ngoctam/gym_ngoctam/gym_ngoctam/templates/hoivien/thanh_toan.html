@@ -1,0 +1,59 @@
+{% extends "app_base.html" %}
+{% block title %}{% if tien_mat %}Thanh toán tiền mặt{% else %}Thanh toán gói tập{% endif %}{% endblock %}
+{% block page %}
+<h1 class="page-title">{% if tien_mat %}Thanh toán tiền mặt{% else %}Thanh toán gói tập{% endif %}</h1>
+<form method="post">
+  {% csrf_token %}
+  <input type="hidden" name="pt" value="{% if tien_mat %}tienmat{% else %}qr{% endif %}">
+  <main class="content {% if tien_mat %}has-footer{% endif %}">
+    <section class="info-card">
+      <div class="kv"><span>Hội viên</span><b>{{ cho.hoTen }}</b></div>
+      <div class="kv"><span>Gói tập</span><b>{{ ten_goi }}</b></div>
+      <div class="kv" style="align-items:center"><span>{% if tien_mat %}Số tiền cần thu{% else %}Số tiền cần thanh toán{% endif %}</span><b class="money">{{ so_tien }} VNĐ</b></div>
+    </section>
+
+    {% if tien_mat %}
+    <section class="info-card" style="margin-top:14px">
+      <h4 style="font-size:15px;margin:0 0 6px">Giao dịch sẽ được ghi nhận</h4>
+      <div class="kv"><span>Mã giao dịch</span><b>{{ ma_gd }}</b></div>
+      <div class="kv"><span>Phương thức</span><b>Tiền mặt</b></div>
+      <div class="kv"><span>Thời gian</span><b>{{ bay_gio|date:"H:i, d/m/Y" }}</b></div>
+      <div class="kv"><span>Nhân viên thu</span><b>{{ nhan_vien }}</b></div>
+      <p class="note">Dữ liệu này được dùng cho báo cáo doanh thu theo tháng.</p>
+    </section>
+    {% else %}
+    <section class="info-card qr-box" style="margin-top:14px">
+      <h4>Quét mã để chuyển khoản</h4>
+      <div class="qr-frame"><img src="{{ link_qr }}" alt="Mã QR chuyển khoản"></div>
+      <p class="qr-caption">Mã QR minh họa</p>
+      <div class="kv" style="text-align:left"><span>Nội dung CK</span><b>{{ noi_dung_ck }}</b></div>
+    </section>
+    <div class="pay-status"><span>Trạng thái</span><span class="tag tag-amber">Đang chờ thanh toán</span></div>
+    <p class="center-note">Giao dịch được ghi nhận vào báo cáo doanh thu.</p>
+    <div class="btn-row">
+      <button type="button" class="btn btn-outline" id="btn-huy-tt">Hủy</button>
+      <button type="submit" class="btn btn-primary">Đã nhận tiền</button>
+    </div>
+    <a class="link-btn" href="?pt=tienmat" style="text-align:center">Thanh toán bằng tiền mặt</a>
+    {% endif %}
+  </main>
+  {% if tien_mat %}
+  <div class="footer-actions btn-row">
+    <button type="button" class="btn btn-outline" id="btn-huy-tt">Hủy</button>
+    <button type="submit" class="btn btn-primary">Đã thu tiền</button>
+  </div>
+  {% endif %}
+
+  <div class="overlay" id="modal-huy-tt" hidden>
+    <div class="modal left">
+      <h3>Hủy thanh toán?</h3>
+      <p>{% if cho.kieu == 'them' %}Hội viên {{ cho.hoTen }} sẽ chưa được thêm vào hệ thống. Bạn sẽ quay lại biểu mẫu để chọn gói khác.{% else %}{{ ten_goi }} sẽ chưa được đăng ký cho hội viên {{ cho.hoTen }}. Bạn sẽ quay lại màn hình chỉnh sửa.{% endif %}</p>
+      <div class="btn-row">
+        <button type="button" class="btn btn-outline" data-close>Quay lại</button>
+        <button type="submit" class="btn btn-danger" name="huy" value="1">Hủy thanh toán</button>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+{% block modals %}{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}{% endblock %}

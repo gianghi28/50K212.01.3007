@@ -1,0 +1,24 @@
+{% extends "app_base.html" %}
+{% block title %}Hội viên đang tập{% endblock %}
+{% block page %}
+<h1 class="page-title">Hội viên đang tập</h1>
+<main class="content has-footer">
+  {% if not loi_he_thong %}
+  <section class="info-card" style="text-align:center">
+    <p class="card-sub" style="font-size:14px">Số hội viên đang tập hiện tại</p>
+    <div class="big-number">{{ tong }}</div>
+  </section>
+  <section class="info-card" style="margin-top:14px">
+    <h4 style="font-size:15px;margin:0 0 6px">Theo gói tập</h4>
+    {% for d in dong %}
+    <div class="hbar-row">
+      <div class="hbar-top"><span>{{ d.ten }}</span><b>{{ d.so }}</b></div>
+      <div class="hbar"><div style="width: {{ d.pct }}%"></div></div>
+    </div>
+    {% endfor %}
+  </section>
+  {% endif %}
+</main>
+{% include "partials/nut_xuat.html" %}
+{% endblock %}
+{% block modals %}{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}{% endblock %}

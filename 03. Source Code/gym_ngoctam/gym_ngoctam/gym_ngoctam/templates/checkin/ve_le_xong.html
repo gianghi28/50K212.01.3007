@@ -1,0 +1,18 @@
+{% extends "app_base.html" %}
+{% block title %}Bán vé lẻ{% endblock %}
+{% block page %}
+<h1 class="page-title">Bán vé lẻ</h1>
+<main class="content has-footer">
+  <section class="info-card" style="text-align:center">
+    <svg class="icon" style="width:72px;height:72px;display:block;margin:4px auto 8px" viewBox="0 0 64 64" fill="none" stroke="#57994F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="28"/><path d="M19 33l9 9 17-18"/></svg>
+    <b style="font-size:15px">Đã ghi nhận vé lẻ</b>
+  </section>
+  <section class="info-card" style="margin-top:14px">
+    <div class="kv"><span>Loại vé</span><b>Vé lẻ 1 ngày</b></div>
+    <div class="kv"><span>Số tiền</span><b>{{ gia }}đ</b></div>
+    <div class="kv"><span>Thanh toán</span><b>{% if ve.giaoDich.hinhThuc == 'Tiền mặt' %}Tiền mặt{% else %}Chuyển khoản QR{% endif %}</b></div>
+    <div class="kv"><span>Thời gian</span><b>{{ ve.ngayMua|date:"H:i d/m/Y" }}</b></div>
+  </section>
+</main>
+<div class="footer-actions"><a class="btn btn-primary btn-block" href="{% url 'checkin_chinh' %}">Xong</a></div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Quản lý hội viên{% endblock %}
+{% block content %}
+{# Giao diện tạm – sẽ làm lại đúng Figma ở bước giao diện #}
+<div class="page-head">
+  <h1>Quản lý hội viên</h1>
+  <a class="btn primary" href="{% url 'hoi_vien_them' %}">+ Thêm hội viên</a>
+</div>
+
+<div class="stats">
+  <div class="stat"><b>{{ total }}</b><span>Tổng hội viên</span></div>
+</div>
+
+<form method="get" class="filters">
+  <input type="search" name="q" value="{{ q }}" placeholder="Nhập tên, SĐT hoặc mã hội viên…">
+  <button class="btn" type="submit">Tìm</button>
+</form>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Mã</th><th>Họ tên</th><th>SĐT</th><th>Gói hiện tại</th><th>Còn lại</th><th>Trạng thái</th><th></th></tr></thead>
+  <tbody>
+  {% for hv in hoi_viens %}
+    {% with dk=hv.dang_ky_hien_tai %}
+    <tr>
+      <td>{{ hv.maHV }}</td>
+      <td>{{ hv.hoTen }}</td>
+      <td>{{ hv.soDienThoai }}</td>
+      <td>{% if dk %}{{ dk.goiTap.tenGoi }}{% else %}—{% endif %}</td>
+      <td>{{ hv.so_ngay_con_lai }} ngày</td>
+      <td>{{ hv.trang_thai }}</td>
+      <td class="actions">
+        <a href="{% url 'hoi_vien_sua' hv.pk %}">Sửa</a>
+        <a href="{% url 'hoi_vien_xoa' hv.pk %}" class="danger">Xóa</a>
+      </td>
+    </tr>
+    {% endwith %}
+  {% empty %}
+    <tr><td colspan="7" class="empty">Chưa có hội viên</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+
+{% if is_paginated %}
+<div class="pager">
+  {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ q|urlencode }}">‹ Trước</a>{% endif %}
+  <span>Trang {{ page_obj.number }} / {{ paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ q|urlencode }}">Sau ›</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

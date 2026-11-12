@@ -1,0 +1,24 @@
+{% extends "app_base.html" %}
+{% block title %}Doanh thu theo tháng{% endblock %}
+{% block page %}
+<h1 class="page-title">Doanh thu theo tháng</h1>
+<main class="content has-footer">
+  {% include "partials/loc_thang.html" %}
+  {% if not loi and not loi_he_thong %}
+    {% if co_du_lieu %}
+    <section class="info-card chart-card">
+      <div class="chart-head"><b>Doanh thu (VNĐ)</b><span>Tổng: {{ tong }}</span></div>
+      {% include "partials/bieu_do.html" %}
+    </section>
+    <section class="info-card" style="margin-top:14px">
+      <div class="kv"><span>Tháng cao nhất</span><b>{{ cao_nhat.ten_day_du }} · {{ cao_nhat.hien_thi }}</b></div>
+      <div class="kv"><span>Tháng thấp nhất</span><b>{{ thap_nhat.ten_day_du }} · {{ thap_nhat.hien_thi }}</b></div>
+    </section>
+    {% else %}
+    <div class="empty" style="margin-top:60px"><h3>Không có dữ liệu doanh thu trong khoảng thời gian này</h3></div>
+    {% endif %}
+  {% endif %}
+</main>
+{% include "partials/nut_xuat.html" with khoa=loi %}
+{% endblock %}
+{% block modals %}{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "checkin/khach_base.html" %}
+{% block page %}
+<main class="content" style="justify-content:flex-start;padding-top:120px">
+  <form method="post" class="info-card" novalidate>
+    {% csrf_token %}
+    <h3 style="font-size:15px;margin:0 0 10px">Vui lòng nhập SĐT</h3>
+    <div class="field {% if loi %}has-error{% endif %}" style="margin-bottom:12px">
+      <input class="input" name="sdt" inputmode="numeric" placeholder="Số điện thoại" value="{{ sdt }}" autofocus>
+      {% if loi %}<p class="err" style="margin-left:0">{{ loi }}</p>{% endif %}
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Xác nhận</button>
+  </form>
+</main>
+{% endblock %}
+{% block modals %}{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}{% endblock %}

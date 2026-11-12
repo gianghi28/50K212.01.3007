@@ -1,0 +1,44 @@
+{% load static %}<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}Phòng Gym NT{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/ui.css' %}">
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <a class="brand" href="{% url 'hoi_vien_list' %}">
+      <img src="{% static 'img/logo.png' %}" alt="Logo Phòng Gym NT">
+      <span>Phòng Gym NT</span>
+    </a>
+    <button type="button" class="icon-btn" data-menu-toggle aria-label="Mở menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#282019" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="menu">
+      <a href="{% url 'checkin_chinh' %}" class="{% if menu == 'checkin' %}active{% endif %}">Check-in</a>
+      <a href="{% url 'hoi_vien_list' %}" class="{% if menu == 'hoivien' %}active{% endif %}">Hội viên</a>
+      <a href="{% url 'goi_tap_list' %}" class="{% if menu == 'goitap' %}active{% endif %}">Gói tập</a>
+      <a href="{% url 'bao_cao' %}" class="{% if menu == 'baocao' %}active{% endif %}">Báo cáo</a>
+      <form method="post" action="{% url 'logout' %}" class="menu-logout">{% csrf_token %}<button type="submit">Đăng xuất ({{ user.get_username }})</button></form>
+    </nav>
+  </header>
+  <div class="menu-backdrop"></div>
+  {% if messages %}
+  <div class="toast-wrap">
+    {% for m in messages %}<div class="toast"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"/></svg>{{ m }}</div>{% endfor %}
+  </div>
+  {% endif %}
+
+  {% block page %}{% endblock %}
+</div>
+
+{% block modals %}{% endblock %}
+<script src="{% static 'js/ui.js' %}"></script>
+<script src="{% static 'js/hoivien.js' %}"></script>
+</body>
+</html>

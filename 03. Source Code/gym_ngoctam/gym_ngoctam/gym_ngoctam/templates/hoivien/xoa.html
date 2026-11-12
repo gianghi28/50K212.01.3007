@@ -1,0 +1,65 @@
+{% extends "app_base.html" %}
+{% load ui %}
+{% block title %}Chọn hội viên cần xóa{% endblock %}
+{% block page %}
+<h1 class="page-title">Chọn hội viên cần xóa</h1>
+<form method="post" id="form-xoa">
+  {% csrf_token %}
+  <main class="content has-footer">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input class="input" type="search" placeholder="Tìm kiếm hội viên" id="loc-xoa" autocomplete="off">
+    </div>
+    <div class="select-bar"><b>Đã chọn: <span id="dem-chon">0</span></b><button type="button" class="link-small" id="chon-tat-ca">Chọn tất cả</button></div>
+
+    <div id="ds-xoa">
+      {% for hv in ds %}
+      <label class="card member-card pick-card" data-tim="{{ hv.hoTen|lower }} {{ hv.soDienThoai }} {{ hv.maHV|lower }}">
+        <div class="row">
+          <span class="check-row" style="border:0;height:auto;padding:0;background:none"><input type="checkbox" name="chon" value="{{ hv.pk }}" {% if hv.pk in chon %}checked{% endif %}></span>
+          {% include "partials/avatar.html" %}
+          <div class="grow">
+            <div class="name">{{ hv.hoTen }}</div>
+            {% with dk=hv.dang_ky_hien_tai %}<div class="sub">{% if hv.da_chuyen_nhuong_het %}Không còn gói tập{% elif dk %}{{ dk.goiTap|ten_goi }}{% else %}Chưa có gói{% endif %}</div>{% endwith %}
+          </div>
+          {% include "partials/tag_trang_thai.html" %}
+        </div>
+      </label>
+      {% endfor %}
+    </div>
+    <div class="empty" id="xoa-rong" style="margin-top:60px" {% if ds %}hidden{% endif %}>
+      <h3>Không tìm thấy hội viên</h3>
+      <p>Hãy thử từ khóa khác.</p>
+    </div>
+  </main>
+  <div class="footer-actions btn-row">
+    <a class="btn btn-outline" href="{% url 'hoi_vien_list' %}">Hủy</a>
+    <button type="button" class="btn btn-danger" id="btn-xoa" disabled>Xóa (0)</button>
+  </div>
+
+  <div class="overlay" id="modal-xoa" hidden>
+    <div class="modal">
+      <h3 style="margin:14px 0 20px" id="xoa-tieu-de">Xóa hội viên?</h3>
+      <div class="btn-row">
+        <button type="button" class="btn btn-outline" data-close>Hủy</button>
+        <button type="submit" class="btn btn-danger">Xóa</button>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block modals %}
+{% if da_xoa %}
+  {% url 'hoi_vien_list' as link_ds %}
+  <div class="overlay">
+    <div class="modal">
+      <svg class="icon" viewBox="0 0 64 64" fill="none" stroke="#57994F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="28"/><path d="M19 33l9 9 17-18"/></svg>
+      <h3>Xóa hội viên thành công</h3>
+      <p>Đã xóa {{ da_xoa }} hội viên khỏi hệ thống.</p>
+      <a class="btn btn-primary btn-block" href="{{ link_ds }}">Đóng</a>
+    </div>
+  </div>
+{% endif %}
+{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}
+{% endblock %}

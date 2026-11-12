@@ -1,0 +1,14 @@
+{# Bộ lọc Năm / Từ tháng / Đến tháng #}
+<form method="get" class="report-filter">
+  <input type="hidden" name="loc" value="1">
+  <div class="pill-row">
+    <label class="pill-label {% if loi %}is-error{% endif %}"><span>Năm</span>
+      <select name="nam" data-sheet="Năm">{% for y in nam_opts %}<option value="{{ y }}" {% if y == nam %}selected{% endif %}>{{ y }}</option>{% endfor %}</select></label>
+    <label class="pill-label {% if loi %}is-error{% endif %}"><span>Từ</span>
+      <select name="tu" data-sheet="Từ tháng"><option value="">MM</option>{% for m in thang_opts %}<option value="{{ m }}" {% if m == tu %}selected{% endif %}>T{{ m }}</option>{% endfor %}</select></label>
+    <label class="pill-label {% if loi %}is-error{% endif %}"><span>Đến</span>
+      <select name="den" data-sheet="Đến tháng"><option value="">MM</option>{% for m in thang_opts %}<option value="{{ m }}" {% if m == den %}selected{% endif %}>T{{ m }}</option>{% endfor %}</select></label>
+  </div>
+  <button type="submit" class="btn btn-primary btn-block" style="margin-top:12px;height:46px">Lọc</button>
+</form>
+{% if loi %}<div class="alert-red">{{ loi }}</div>{% endif %}

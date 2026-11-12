@@ -1,0 +1,38 @@
+{% extends "app_base.html" %}
+{% load ui %}
+{% block title %}Xác nhận check-in{% endblock %}
+{% block page %}
+<h1 class="page-title">Xác nhận check-in</h1>
+<form method="post">
+  {% csrf_token %}
+  <main class="content has-footer">
+    {% if bl %}<div class="banner">Hội viên đang bảo lưu. Xác nhận check-in sẽ kết thúc bảo lưu.</div>{% endif %}
+    <section class="detail-card">
+      <div class="big-avatar">{% if hv.anhDaiDien %}<img src="{{ hv.anhDaiDien.url }}" alt="">{% else %}<svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>{% endif %}</div>
+      <div class="kv"><span>Mã HV</span><b>{{ hv.maHV }}</b></div>
+      <div class="kv"><span>Họ tên</span><b>{{ hv.hoTen }}</b></div>
+      <div class="kv"><span>SĐT</span><b>{{ hv.soDienThoai }}</b></div>
+      <div class="kv"><span>Gói tập HT</span><b>{% if hv.da_chuyen_nhuong_het %}Không còn gói tập{% elif dk %}{{ dk.goiTap|ten_goi }}{% else %}Chưa có gói{% endif %}</b></div>
+      {% if bl %}
+      <div class="kv"><span>Bảo lưu đến ngày</span><b>{{ bl.ngayKetThuc|date:"d/m/Y" }}</b></div>
+      {% else %}
+      <div class="kv"><span>Số ngày còn lại</span><b>{% if het_han %}0{% else %}{{ hv.so_ngay_con_lai }} ngày{% endif %}</b></div>
+      {% endif %}
+      <div class="kv" style="align-items:center"><span>Trạng thái</span>{% if het_han %}<span class="tag tag-red">Hết hạn</span>{% else %}{% include "partials/tag_trang_thai.html" %}{% endif %}</div>
+    </section>
+  </main>
+  <div class="footer-actions btn-row">
+    <button type="submit" class="btn btn-outline" name="huy" value="1">Hủy</button>
+    <button type="submit" class="btn btn-primary" {% if het_han %}disabled{% endif %}>Xác nhận</button>
+  </div>
+  {% if loi_he_thong %}
+  <div class="overlay">
+    <div class="modal">
+      <svg class="icon" viewBox="0 0 64 64" fill="none" stroke="#8D2C26" stroke-width="5" stroke-linecap="round"><circle cx="32" cy="32" r="28"/><path d="M32 18v18"/><circle cx="32" cy="45" r="1.5" fill="#8D2C26"/></svg>
+      <h3>Có lỗi xảy ra. Vui lòng thử lại</h3>
+      <button type="submit" class="btn btn-primary btn-block" name="dong_loi" value="1" style="margin-top:10px">Đóng</button>
+    </div>
+  </div>
+  {% endif %}
+</form>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Phòng Gym NT{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+  {% if user.is_authenticated %}
+  <header class="topbar">
+    <a class="brand" href="{% url 'hoi_vien_list' %}">Phòng Gym NT</a>
+    <nav>
+      <a href="{% url 'hoi_vien_list' %}">Hội viên</a>
+      <a href="{% url 'goi_tap_list' %}">Gói tập</a>
+      <span class="who">{{ user.tenDangNhap }}</span>
+      <form method="post" action="{% url 'logout' %}" class="inline">
+        {% csrf_token %}
+        <button type="submit" class="link">Đăng xuất</button>
+      </form>
+    </nav>
+  </header>
+  {% endif %}
+  <main class="container">
+    {% if messages %}
+      {% for m in messages %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

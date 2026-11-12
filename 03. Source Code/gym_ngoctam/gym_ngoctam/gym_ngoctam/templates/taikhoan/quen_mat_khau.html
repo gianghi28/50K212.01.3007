@@ -1,0 +1,19 @@
+{% extends "taikhoan/base.html" %}
+{% block title %}Quên mật khẩu{% endblock %}
+{% block page %}
+<h1 class="page-title auth-title">Quên mật khẩu</h1>
+<main class="content">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <h2 class="auth-h2">Quên mật khẩu?</h2>
+    <p class="auth-sub">Nhập số điện thoại hoặc email đã đăng ký, hệ thống sẽ gửi mã xác minh cho bạn.</p>
+    <div class="field {% if loi %}has-error{% endif %}">
+      <label class="label-strong">Số điện thoại hoặc email</label>
+      <div class="icon-input"><svg viewBox="0 0 24 24" fill="#000"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><input class="input" name="lien_he" placeholder="Nhập số điện thoại hoặc email" value="{{ gia_tri }}"></div>
+      {% if loi %}<p class="err" style="margin-left:0">{{ loi }}</p>{% endif %}
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Gửi mã xác minh</button>
+    <a class="link-btn" style="text-align:center" href="{% url 'login' %}">Quay lại đăng nhập</a>
+  </form>
+</main>
+{% endblock %}

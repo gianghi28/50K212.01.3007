@@ -1,0 +1,46 @@
+{% extends "app_base.html" %}
+{% block title %}Lịch sử check-in{% endblock %}
+{% block page %}
+<h1 class="page-title">Lịch sử check-in</h1>
+<main class="content">
+  <div class="btn-row">
+    <a class="btn btn-outline" href="{% url 'checkin_loc' %}?{{ qs }}">Lọc</a>
+    {% if ds %}<a class="btn btn-outline" href="{% url 'checkin_xuat_excel' %}?{{ qs }}" id="btn-excel">Xuất Excel</a>
+    {% else %}<button type="button" class="btn btn-outline" disabled>Xuất Excel</button>{% endif %}
+  </div>
+  {% if not loi_he_thong %}
+  <p class="range-line">{{ tu|date:"d/m/Y" }} – {{ den|date:"d/m/Y" }} · {{ ds|length }} lượt</p>
+  {% endif %}
+  {% for l in ds %}
+  <div class="card">
+    <div class="row">
+      {% include "partials/avatar.html" with hv=l.hoiVien %}
+      <div class="grow">
+        <div class="name">{{ l.hoiVien.hoTen }}</div>
+        <div class="sub">{{ l.hoiVien.maHV }} · {{ l.hoiVien.soDienThoai }}</div>
+      </div>
+    </div>
+    <div class="history-line">{{ l.ten_goi }} · {{ l.thoiGian|date:"H:i, d/m/Y" }}</div>
+  </div>
+  {% empty %}
+  {% if not loi_he_thong %}
+  <div class="empty" style="margin-top:50px">
+    <h3>Không có lượt check-in phù hợp</h3>
+    <p>Hãy thử chọn khoảng thời gian hoặc từ khóa khác.</p>
+  </div>
+  {% endif %}
+  {% endfor %}
+</main>
+<div class="toast-wrap" id="toast-excel" hidden><div class="toast"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"/></svg>Đã tải xuống file .xlsx</div></div>
+<script>
+(function () {
+  var b = document.getElementById("btn-excel"), t = document.getElementById("toast-excel");
+  if (!b) return;
+  b.addEventListener("click", function () {
+    t.hidden = false; t.firstElementChild.classList.remove("hide");
+    setTimeout(function () { t.firstElementChild.classList.add("hide"); setTimeout(function () { t.hidden = true; }, 400); }, 3000);
+  });
+})();
+</script>
+{% endblock %}
+{% block modals %}{% if loi_he_thong %}{% url 'checkin_chinh' as link_cc %}{% include "partials/modal_loi.html" %}{% endif %}{% endblock %}

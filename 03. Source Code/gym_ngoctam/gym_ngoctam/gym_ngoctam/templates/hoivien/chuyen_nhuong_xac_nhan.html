@@ -1,0 +1,41 @@
+{% extends "app_base.html" %}
+{% load ui %}
+{% block title %}Chuyển nhượng gói tập{% endblock %}
+{% block page %}
+<h1 class="page-title">Chuyển nhượng gói tập</h1>
+<form method="post">
+  {% csrf_token %}
+  <input type="hidden" name="nguoi_nhan" value="{{ nn.pk }}">
+  <main class="content has-footer">
+    <section class="card"><div class="row">
+      {% include "partials/avatar.html" with hv=nc %}
+      <div class="grow"><div class="sub" style="font-size:13px">Người chuyển</div><div class="name">{{ nc.hoTen }}</div><div class="sub">{{ nc.maHV }} · {{ nc.soDienThoai }}</div></div>
+    </div></section>
+    <div class="arrow-down">↓</div>
+    <section class="card" style="margin-top:0"><div class="row">
+      {% include "partials/avatar.html" with hv=nn %}
+      <div class="grow"><div class="sub" style="font-size:13px">Người nhận</div><div class="name">{{ nn.hoTen }}</div><div class="sub">{{ nn.maHV }} · {{ nn.soDienThoai }}</div></div>
+    </div></section>
+
+    <section class="info-card" style="margin-top:14px">
+      {% if t.con_han %}
+      <div class="kv"><span>Gói chuyển nhượng</span><b>{{ t.goi_chuyen|ten_goi }}</b></div>
+      <div class="kv"><span>Gói của người nhận</span><b>{{ t.goi_nhan|ten_goi }} (giữ nguyên)</b></div>
+      <div class="kv"><span>Số ngày hiện có</span><b>{{ t.x }} ngày</b></div>
+      <div class="kv"><span>Số ngày chuyển</span><b>{{ t.y }} ngày</b></div>
+      <div class="kv"><span>Tổng số ngày</span><b>{{ t.x }} + {{ t.y }} = {{ t.tong }} ngày</b></div>
+      <div class="kv"><span>Ngày kết thúc mới</span><b>{{ t.ket_thuc|date:"d/m/Y" }}</b></div>
+      {% else %}
+      <div class="kv"><span>Gói tập được cấp</span><b>{{ t.goi_chuyen|ten_goi }}</b></div>
+      <div class="kv"><span>Số ngày chuyển nhượng</span><b>{{ t.y }} ngày</b></div>
+      <div class="kv"><span>Ngày kết thúc</span><b>{{ t.ket_thuc|date:"d/m/Y" }}</b></div>
+      {% endif %}
+    </section>
+  </main>
+  <div class="footer-actions btn-row">
+    <a class="btn btn-outline" href="{% url 'hoi_vien_chi_tiet' nc.pk %}">Hủy</a>
+    <button type="submit" class="btn btn-primary btn-2line" name="xac_nhan" value="1">Xác nhận<br>chuyển nhượng</button>
+  </div>
+</form>
+{% endblock %}
+{% block modals %}{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}{% endblock %}
