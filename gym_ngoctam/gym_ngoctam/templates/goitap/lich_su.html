@@ -1,0 +1,79 @@
+{% extends "app_base.html" %}
+{% load ui %}
+{% block title %}Lịch sử đăng ký gói{% endblock %}
+{% block page %}
+<h1 class="page-title">Lịch sử đăng ký gói</h1>
+<main class="content">
+  <form method="get" novalidate>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input class="input" name="q" placeholder="Nhập tên, SĐT..." value="{{ g.q|default:'' }}">
+    </div>
+
+    <p class="filter-label">Từ ngày</p>
+    <div class="pill-row">
+      <select class="pill {% if loi_ngay %}is-error{% endif %}" name="tu_d" data-sheet="Ngày"><option value="">DD</option>{% for o in ngay_opts %}<option {% if g.tu_d == o %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+      <select class="pill {% if loi_ngay %}is-error{% endif %}" name="tu_m" data-sheet="Tháng"><option value="">MM</option>{% for o in thang_opts %}<option {% if g.tu_m == o %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+      <select class="pill {% if loi_ngay %}is-error{% endif %}" name="tu_y" data-sheet="Năm"><option value="">YYYY</option>{% for o in nam_opts %}<option {% if g.tu_y == o %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+    </div>
+    <p class="filter-label">Đến ngày</p>
+    <div class="pill-row">
+      <select class="pill {% if loi_ngay %}is-error{% endif %}" name="den_d" data-sheet="Ngày"><option value="">DD</option>{% for o in ngay_opts %}<option {% if g.den_d == o %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+      <select class="pill {% if loi_ngay %}is-error{% endif %}" name="den_m" data-sheet="Tháng"><option value="">MM</option>{% for o in thang_opts %}<option {% if g.den_m == o %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+      <select class="pill {% if loi_ngay %}is-error{% endif %}" name="den_y" data-sheet="Năm"><option value="">YYYY</option>{% for o in nam_opts %}<option {% if g.den_y == o %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+    </div>
+
+    <div class="filter-row">
+      <input type="hidden" name="loai" id="loai" value="{{ loai }}">
+      <button type="button" class="pill {% if loi_ngay %}is-error{% endif %}" data-open-sheet="sheet-loai" id="loai-label">Loại: {% if loai %}{{ loai }}{% else %}Tất cả{% endif %}</button>
+      <button type="submit" class="btn btn-primary">Lọc</button>
+    </div>
+    {% if loi_ngay %}<p class="filter-error">{{ loi_ngay }}</p>{% endif %}
+  </form>
+
+  {% if not loi_ngay %}
+    {% if ket_qua %}
+    <div class="list-gap">
+      {% for dk in ket_qua %}
+      <div class="card">
+        <div class="row">
+          {% include "partials/avatar.html" with hv=dk.hoiVien %}
+          <div class="grow">
+            <div class="name">{{ dk.hoiVien.hoTen }}</div>
+            <div class="sub">{{ dk.hoiVien.maHV }}</div>
+          </div>
+          <span class="tag {% if dk.loai == 'Chuyển nhượng đi' or dk.loai == 'Nhận chuyển nhượng' %}tag-amber{% else %}tag-green{% endif %}">{{ dk.loai }}</span>
+        </div>
+        <div class="history-line">
+          {% if dk.loai == 'Chuyển nhượng đi' %}{{ dk.goiTap|ten_goi }} · {{ dk.soNgayCongDon|default:0 }} ngày → {{ dk.ten_doi_ung }}
+          {% elif dk.loai == 'Nhận chuyển nhượng' %}{{ dk.soNgayCongDon|default:0 }} ngày ← {{ dk.ten_doi_ung }}
+          {% else %}{{ dk.goiTap|ten_goi }} · {{ dk.ngayDangKy|date:"H:i, d/m/Y" }}{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty" style="margin-top:40px">
+      <h3>Không có lượt đăng ký nào</h3>
+      <p>Hãy thử chọn khoảng thời gian hoặc loại khác.</p>
+    </div>
+    {% endif %}
+  {% endif %}
+</main>
+{% endblock %}
+
+{% block modals %}
+<div class="overlay sheet-overlay" id="sheet-loai" hidden data-input="loai" data-label="loai-label" data-prefix="Loại: ">
+  <div class="sheet">
+    <h3>Chọn loại</h3>
+    {% for val, ten in loai_list %}
+    <label class="radio-item"><input type="radio" name="_loai" value="{{ val }}" data-text="{{ ten }}">{{ ten }}</label>
+    {% endfor %}
+    <div class="btn-row">
+      <button type="button" class="btn btn-outline" data-close>Hủy</button>
+      <button type="button" class="btn btn-primary" data-sheet-choose>Chọn</button>
+    </div>
+  </div>
+</div>
+{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}
+{% endblock %}

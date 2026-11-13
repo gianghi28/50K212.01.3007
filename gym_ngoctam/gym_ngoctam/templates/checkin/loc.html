@@ -1,0 +1,32 @@
+{% extends "app_base.html" %}
+{% block title %}Lọc lịch sử check-in{% endblock %}
+{% block page %}
+<h1 class="page-title">Lọc lịch sử check-in</h1>
+<form method="get" action="{% url 'checkin_lich_su' %}">
+  <input type="hidden" name="loc" value="1">
+  <main class="content">
+    <p class="filter-label" style="margin-top:0">Từ ngày</p>
+    <div class="pill-row">
+      <select class="pill {% if loi %}is-error{% endif %}" name="tu_d" data-sheet="Ngày"><option value="">DD</option>{% for o in ngay_opts %}<option {% if g.tu_d == o %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+      <select class="pill {% if loi %}is-error{% endif %}" name="tu_m" data-sheet="Tháng"><option value="">MM</option>{% for o in thang_opts %}<option {% if g.tu_m == o %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+      <select class="pill {% if loi %}is-error{% endif %}" name="tu_y" data-sheet="Năm"><option value="">YYYY</option>{% for o in nam_opts %}<option {% if g.tu_y == o %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+    </div>
+    <p class="filter-label">Đến ngày</p>
+    <div class="pill-row">
+      <select class="pill {% if loi %}is-error{% endif %}" name="den_d" data-sheet="Ngày"><option value="">DD</option>{% for o in ngay_opts %}<option {% if g.den_d == o %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+      <select class="pill {% if loi %}is-error{% endif %}" name="den_m" data-sheet="Tháng"><option value="">MM</option>{% for o in thang_opts %}<option {% if g.den_m == o %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+      <select class="pill {% if loi %}is-error{% endif %}" name="den_y" data-sheet="Năm"><option value="">YYYY</option>{% for o in nam_opts %}<option {% if g.den_y == o %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+    </div>
+    {% if loi %}<p class="filter-error">Khoảng thời gian không hợp lệ</p>{% endif %}
+    <p class="filter-label">Tên hoặc SĐT</p>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input class="input" name="q" placeholder="Nhập tên, SĐT" value="{{ g.q|default:'' }}">
+    </div>
+    <div class="btn-row" style="margin-top:16px">
+      <a class="btn btn-outline" href="{% url 'checkin_lich_su' %}?{{ qs_back }}">Hủy</a>
+      <button type="submit" class="btn btn-primary">Lọc</button>
+    </div>
+  </main>
+</form>
+{% endblock %}

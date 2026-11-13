@@ -1,0 +1,37 @@
+{% extends "app_base.html" %}
+{% load ui %}
+{% block title %}Chi tiết gói tập{% endblock %}
+{% block page %}
+<h1 class="page-title">Chi tiết gói tập</h1>
+<main class="content has-footer">
+  <section class="info-card">
+    <h2>{{ goi|ten_goi }}</h2>
+    <div class="info-line"><span>Giá</span><b>{{ goi.gia|vnd }} VNĐ</b></div>
+    <div class="info-line"><span>Thời hạn</span><b>{{ goi.thoiHan }} ngày</b></div>
+    <div class="info-line"><span>Thời hạn bảo lưu</span><b>{{ goi.thoiHanBaoLuu|default:0 }} ngày</b></div>
+    <div class="info-line"><span>Trạng thái</span><b>{{ goi.trangThaiBan }}</b></div>
+    <div class="info-line"><span>Hội viên đang đăng ký</span><b>{{ so_dang_dung }}</b></div>
+  </section>
+
+  <section class="info-card section-card">
+    <h2 style="font-size:16px;margin-bottom:4px">Hội viên đã đăng ký gói này</h2>
+    {% for hv in hoi_vien_list %}
+    <div class="row">
+      {% include "partials/avatar.html" %}
+      <div class="grow">
+        <div class="name">{{ hv.hoTen }}</div>
+        <div class="sub">{{ hv.soDienThoai }}</div>
+      </div>
+      {% with tt=hv.trang_thai %}
+      <span class="tag {% if tt == 'Còn hạn' %}tag-green{% elif tt == 'Đang bảo lưu' %}tag-amber{% else %}tag-red{% endif %}">{{ tt }}</span>
+      {% endwith %}
+    </div>
+    {% empty %}
+    <p class="card-sub" style="padding:10px 0">Chưa có hội viên nào đăng ký gói này.</p>
+    {% endfor %}
+  </section>
+</main>
+<div class="footer-actions" style="display:flex;justify-content:center">
+  <a class="btn btn-primary" style="width:60%" href="{% url 'goi_tap_sua' goi.pk %}">Chỉnh sửa</a>
+</div>
+{% endblock %}

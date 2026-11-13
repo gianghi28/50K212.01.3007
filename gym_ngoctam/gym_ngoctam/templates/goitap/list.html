@@ -1,0 +1,28 @@
+{% extends "app_base.html" %}
+{% load ui %}
+{% block title %}Quản lý gói tập{% endblock %}
+{% block page %}
+<h1 class="page-title">Quản lý gói tập</h1>
+<main class="content">
+  <div class="btn-row">
+    <a class="btn btn-primary" href="{% url 'goi_tap_them' %}">+ Thêm gói mới</a>
+    <a class="btn btn-outline" href="{% url 'lich_su_dang_ky' %}">Lịch sử đăng ký</a>
+  </div>
+
+  {% if goi_list %}
+  <div class="list-gap">
+    {% for goi in goi_list %}
+    <a class="card" href="{% url 'goi_tap_chi_tiet' goi.pk %}">
+      <p class="card-title">{{ goi|ten_goi }}</p>
+      <p class="card-sub">Giá: {{ goi.gia|vnd }} · Trạng thái: {{ goi.trangThaiBan }}</p>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">
+    <h3>Chưa có gói tập nào</h3>
+    <p>Bấm "+ Thêm gói mới" để tạo gói tập đầu tiên.</p>
+  </div>
+  {% endif %}
+</main>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "app_base.html" %}
+{% load ui %}
+{% block title %}Chi tiết hội viên{% endblock %}
+{% block page %}
+<h1 class="page-title">Chi tiết hội viên</h1>
+<main class="content has-footer">
+  <section class="detail-card">
+    <div class="big-avatar">{% if hv.anhDaiDien %}<img src="{{ hv.anhDaiDien.url }}" alt="">{% else %}<svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>{% endif %}</div>
+    <div class="kv"><span>Mã HV</span><b>{{ hv.maHV }}</b></div>
+    <div class="kv"><span>Họ tên</span><b>{{ hv.hoTen }}</b></div>
+    <div class="kv"><span>SĐT</span><b>{{ hv.soDienThoai }}</b></div>
+    <div class="kv"><span>Gói tập HT</span><b>{% if hv.da_chuyen_nhuong_het %}Không còn gói tập{% elif dk %}{{ dk.goiTap|ten_goi }}{% else %}Chưa có gói{% endif %}</b></div>
+    {% if bl %}
+    <div class="kv"><span>Bảo lưu đến ngày</span><b>{{ bl.ngayKetThuc|date:"d/m/Y" }}</b></div>
+    {% else %}
+    <div class="kv"><span>Số ngày còn lại</span><b {% if hv.so_ngay_con_lai <= 0 %}style="color:var(--error)"{% endif %}>{{ hv.so_ngay_con_lai }} ngày</b></div>
+    <div class="kv"><span>Bảo lưu</span><b>{% if hv.da_dung_quyen_bao_luu %}Đã dùng quyền bảo lưu{% else %}Chưa bảo lưu{% endif %}</b></div>
+    {% endif %}
+    <div class="kv" style="align-items:center"><span>Trạng thái</span>{% include "partials/tag_trang_thai.html" %}</div>
+  </section>
+</main>
+<div class="footer-actions btn-row">
+  <a class="btn btn-outline" href="{% url 'chuyen_nhuong' hv.pk %}">Chuyển nhượng gói</a>
+  <a class="btn btn-primary" href="{% url 'hoi_vien_sua' hv.pk %}">Chỉnh sửa</a>
+</div>
+{% endblock %}
+
+{% block modals %}
+{% if loi_cn %}{% url 'hoi_vien_chi_tiet' hv.pk as link_ct %}{% include "partials/modal_canh_bao.html" with noi_dung=loi_cn link_dong=link_ct %}{% endif %}
+{% endblock %}

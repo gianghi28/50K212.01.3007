@@ -1,0 +1,4 @@
+<div class="footer-actions">
+  <a class="btn btn-outline btn-block {% if khoa %}is-disabled{% endif %}" href="?{{ request.GET.urlencode }}{% if request.GET %}&{% endif %}xuat=1" data-xuat {% if khoa %}aria-disabled="true"{% endif %}>Xuất báo cáo</a>
+</div>
+<div class="toast-wrap" id="toast-xuat" hidden><div class="toast"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 4.5"/></svg>Xuất báo cáo thành công</div></div>

@@ -1,0 +1,21 @@
+{# Bảng chọn gói tập (UC02.5) – goi_list: các gói đang bán, ma_dang_dung: mã gói hội viên đang dùng #}
+{{ goi_list|json_script:"goi-data" }}
+<div class="overlay sheet-overlay" id="sheet-goi" hidden>
+  <div class="sheet">
+    <h3>Chọn gói tập</h3>
+    {% for g in goi_list %}
+    <label class="goi-item">
+      <span class="radio-item" style="border:0;padding:0"><input type="radio" name="_goi" value="{{ g.ma }}"></span>
+      <span class="grow"><b>{{ g.ten }}</b><span class="sub">{{ g.gia }} VNĐ · {{ g.thoiHan }} ngày</span></span>
+      {% if g.ma == ma_dang_dung %}<span class="tag tag-green">Đang dùng</span>{% endif %}
+    </label>
+    {% empty %}
+    <p class="card-sub" style="padding:12px 0">Chưa có gói tập nào đang bán.</p>
+    {% endfor %}
+    <p class="err" id="goi-err" hidden>Vui lòng chọn gói tập</p>
+    <div class="btn-row">
+      <button type="button" class="btn btn-outline" data-close>Hủy</button>
+      <button type="button" class="btn btn-primary" id="goi-chon">Chọn</button>
+    </div>
+  </div>
+</div>

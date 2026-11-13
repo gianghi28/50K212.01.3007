@@ -1,0 +1,47 @@
+{% extends "app_base.html" %}
+{% load ui %}
+{% block title %}Thêm gói tập mới{% endblock %}
+{% block page %}
+<h1 class="page-title">Thêm gói tập mới</h1>
+<form method="post" novalidate>
+  {% csrf_token %}
+  <main class="content has-footer">
+    <div class="field {% if form.tenGoi.errors %}has-error{% endif %}">
+      <label for="tenGoi">Tên gói</label>
+      <input class="input" id="tenGoi" name="tenGoi" placeholder="Nhập tên gói" value="{{ form.tenGoi.value|default:'' }}">
+      {% for e in form.tenGoi.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+    <div class="field {% if form.thoiHan.errors %}has-error{% endif %}">
+      <label for="thoiHan">Thời hạn (ngày)</label>
+      <input class="input" id="thoiHan" name="thoiHan" inputmode="numeric" placeholder="Nhập số ngày, ví dụ: 30" value="{{ form.thoiHan.value|default:'' }}">
+      {% for e in form.thoiHan.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+    <div class="field {% if form.thoiHanBaoLuu.errors %}has-error{% endif %}">
+      <label for="thoiHanBaoLuu">Thời hạn bảo lưu (ngày)</label>
+      <input class="input" id="thoiHanBaoLuu" name="thoiHanBaoLuu" inputmode="numeric" placeholder="Nhập số ngày bảo lưu" value="{{ form.thoiHanBaoLuu.value|default:'' }}">
+      {% if form.thoiHanBaoLuu.errors %}{% for e in form.thoiHanBaoLuu.errors %}<p class="err">{{ e }}</p>{% endfor %}
+      {% else %}<p class="hint">Số ngày hội viên được bảo lưu khi dùng gói này.</p>{% endif %}
+    </div>
+    <div class="field {% if form.gia.errors %}has-error{% endif %}">
+      <label for="gia">Giá (VNĐ)</label>
+      <input class="input" id="gia" name="gia" inputmode="numeric" placeholder="Nhập giá" value="{{ form.gia.value|default:'' }}">
+      {% for e in form.gia.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+    <p class="note">Gói mới được tạo ở trạng thái Đang bán. Muốn ngừng bán thì vào Chỉnh sửa gói.</p>
+  </main>
+  <div class="footer-actions btn-row">
+    <a class="btn btn-outline" href="{% url 'goi_tap_list' %}">Hủy</a>
+    <button type="submit" class="btn btn-primary">Lưu</button>
+  </div>
+</form>
+{% endblock %}
+
+{% block modals %}
+{% if goi_moi %}
+  {% url 'goi_tap_list' as link_ds %}
+  {% with ten=goi_moi|ten_goi %}
+  {% include "partials/modal_thanh_cong.html" with tieu_de="Thêm gói tập mới thành công" noi_dung=ten|add:" đã được thêm vào hệ thống." link_dong=link_ds %}
+  {% endwith %}
+{% endif %}
+{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "app_base.html" %}
+{% block title %}Bán vé lẻ{% endblock %}
+{% block page %}
+<h1 class="page-title">Bán vé lẻ</h1>
+<form method="post" novalidate>
+  {% csrf_token %}
+  <main class="content has-footer">
+    <section class="info-card">
+      <div class="info-line" style="padding-top:0"><span>Giá vé</span><b style="font-size:17px">{{ gia }}đ</b></div>
+      <div class="field" style="margin:8px 0 10px">
+        <label for="hoTen">Họ tên (không bắt buộc)</label>
+        <input class="input" id="hoTen" name="hoTen" placeholder="Họ và tên" value="{{ hoTen }}">
+      </div>
+      <div class="field {% if loi_sdt %}has-error{% endif %}" style="margin-bottom:10px">
+        <label for="sdt">Số điện thoại (không bắt buộc)</label>
+        <input class="input" id="sdt" name="sdt" inputmode="numeric" placeholder="Số điện thoại" value="{{ sdt }}">
+        {% if loi_sdt %}<p class="err">{{ loi_sdt }}</p>{% endif %}
+      </div>
+      <label class="label">Hình thức thanh toán</label>
+      <div class="btn-row seg">
+        <label class="seg-btn"><input type="radio" name="hinh_thuc" value="qr" {% if hinh_thuc != 'tienmat' %}checked{% endif %}><span>Chuyển khoản QR</span></label>
+        <label class="seg-btn"><input type="radio" name="hinh_thuc" value="tienmat" {% if hinh_thuc == 'tienmat' %}checked{% endif %}><span>Tiền mặt</span></label>
+      </div>
+    </section>
+  </main>
+  <div class="footer-actions btn-row">
+    <a class="btn btn-outline" href="{% url 'checkin_chinh' %}">Hủy</a>
+    <button type="submit" class="btn btn-primary">Tiếp tục</button>
+  </div>
+</form>
+{% endblock %}

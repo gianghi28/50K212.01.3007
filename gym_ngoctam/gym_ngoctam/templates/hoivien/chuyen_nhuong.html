@@ -1,0 +1,45 @@
+{% extends "app_base.html" %}
+{% load ui %}
+{% block title %}Chuyển nhượng gói tập{% endblock %}
+{% block page %}
+<h1 class="page-title">Chuyển nhượng gói tập</h1>
+<form method="get" id="form-cn">
+  <main class="content has-footer">
+    <section class="info-card">
+      <div class="kv"><span>Người chuyển</span><b>{{ nc.hoTen }}</b></div>
+      <div class="kv"><span>Gói chuyển nhượng</span><b>{{ dk.goiTap|ten_goi }}</b></div>
+      <div class="kv"><span>Số ngày còn lại</span><b>{{ nc.so_ngay_con_lai }} ngày</b></div>
+    </section>
+    <div class="search" style="margin-top:14px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input class="input" type="search" placeholder="Tìm người nhận (tên, SĐT)" id="loc-cn" autocomplete="off">
+    </div>
+    <div id="ds-cn" class="list-gap">
+      {% for hv in ds %}
+      <label class="card member-card pick-card" data-tim="{{ hv.hoTen|lower }} {{ hv.soDienThoai }} {{ hv.maHV|lower }}">
+        <div class="row">
+          {% include "partials/avatar.html" %}
+          <div class="grow">
+            <div class="name">{{ hv.hoTen }}</div>
+            <div class="sub">{{ hv.maHV }} · {{ hv.soDienThoai }}</div>
+          </div>
+          {% include "partials/tag_trang_thai.html" %}
+          <span class="radio-item" style="border:0;padding:0"><input type="radio" name="nguoi_nhan" value="{{ hv.pk }}"></span>
+        </div>
+      </label>
+      {% endfor %}
+    </div>
+    <div class="empty" id="cn-rong" style="margin-top:40px" {% if ds %}hidden{% endif %}>
+      <h3>Không tìm thấy hội viên</h3>
+      <p>Hãy nhập tên hoặc số điện thoại khác.</p>
+    </div>
+  </main>
+  <div class="footer-actions btn-row">
+    <a class="btn btn-outline" href="{% url 'hoi_vien_chi_tiet' nc.pk %}">Hủy</a>
+    <button type="submit" class="btn btn-primary" id="btn-tiep-tuc" disabled>Tiếp tục</button>
+  </div>
+</form>
+{% endblock %}
+{% block modals %}
+{% if loi_nhan %}{% include "partials/modal_canh_bao.html" with noi_dung=loi_nhan link_dong="" %}{% endif %}
+{% endblock %}
