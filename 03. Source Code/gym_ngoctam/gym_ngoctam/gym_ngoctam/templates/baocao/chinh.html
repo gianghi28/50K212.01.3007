@@ -1,0 +1,11 @@
+{% extends "app_base.html" %}
+{% block title %}Báo cáo và thống kê{% endblock %}
+{% block page %}
+<h1 class="page-title">Báo cáo và thống kê</h1>
+<main class="content">
+  <a class="card nav-card" href="{% url 'bc_doanh_thu' %}"><div><p class="card-title">Doanh thu theo tháng</p><p class="card-sub">Xem doanh thu của từng tháng</p></div><span class="chev">›</span></a>
+  <a class="card nav-card" href="{% url 'bc_hoi_vien_moi' %}"><div><p class="card-title">Hội viên mới theo tháng</p><p class="card-sub">Số hội viên đăng ký mới mỗi tháng</p></div><span class="chev">›</span></a>
+  <a class="card nav-card" href="{% url 'bc_dang_tap' %}"><div><p class="card-title">Số lượng hội viên đang tập hiện tại</p><p class="card-sub">Số hội viên đang tập tại phòng gym</p></div><span class="chev">›</span></a>
+  <a class="card nav-card" href="{% url 'bc_goi_dang_ky' %}"><div><p class="card-title">Số lượng gói tập được đăng ký</p><p class="card-sub">Số lượt đăng ký của từng gói tập</p></div><span class="chev">›</span></a>
+</main>
+{% endblock %}

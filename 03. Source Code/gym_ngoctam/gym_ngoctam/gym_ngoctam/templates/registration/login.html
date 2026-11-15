@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Đăng nhập – Phòng Gym NT{% endblock %}
+{% block content %}
+<div class="login-card">
+  <h1>Phòng Gym NT</h1>
+  <p class="muted">Đăng nhập hệ thống quản lý</p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="msg error">Tên đăng nhập hoặc mật khẩu không đúng.</div>{% endif %}
+    <label for="id_username">Tên đăng nhập</label>
+    <input type="text" name="username" id="id_username" autofocus required>
+    <label for="id_password">Mật khẩu</label>
+    <input type="password" name="password" id="id_password" required>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit" class="btn primary block">Đăng nhập</button>
+  </form>
+</div>
+{% endblock %}

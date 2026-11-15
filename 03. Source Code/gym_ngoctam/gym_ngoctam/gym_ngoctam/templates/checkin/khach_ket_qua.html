@@ -1,0 +1,57 @@
+{% extends "checkin/khach_base.html" %}
+{% block page %}
+<form method="post" style="display:contents">
+  {% csrf_token %}
+  {% if yc.trangThai == 'Chờ xác nhận' %}
+  <main class="content" style="padding-top:110px;text-align:center" id="cho-xac-nhan" data-url="{% url 'khach_trang_thai' %}">
+    <div class="dots"><span></span><span></span><span></span></div>
+    <h2 class="kq-title">Đã gửi yêu cầu check-in</h2>
+    <p class="note" style="font-size:15px;margin:0 20px 12px">Vui lòng chờ nhân viên xác nhận trong giây lát.</p>
+    <span class="tag tag-amber" style="align-self:center">Đang chờ xác nhận</span>
+    <section class="info-card" style="margin-top:18px;text-align:left">
+      <div class="kv"><span>Số điện thoại</span><b>{{ kq.sdt }}</b></div>
+      <div class="kv"><span>Thời gian gửi</span><b>{{ kq.gio_gui }}</b></div>
+    </section>
+    <button type="submit" class="link-btn" style="margin-top:auto">Nhập lại số điện thoại</button>
+  </main>
+  <script>
+  setInterval(function () {
+    var m = document.getElementById("cho-xac-nhan");
+    fetch(m.dataset.url).then(function (r) { return r.json(); }).then(function (d) {
+      if (d.trang_thai !== "Chờ xác nhận") location.reload();
+    }).catch(function () {});
+  }, 2500);
+  </script>
+  {% elif yc.trangThai == 'Đã xác nhận' %}
+  <main class="content has-footer" style="padding-top:90px;text-align:center">
+    <svg style="width:96px;height:96px;margin:0 auto 12px" viewBox="0 0 64 64" fill="none" stroke="#57994F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="28"/><path d="M19 33l9 9 17-18"/></svg>
+    <h2 class="kq-title">Check-in thành công</h2>
+    {% if kq.bao_luu_ket_thuc %}<div class="banner" style="text-align:left">Bảo lưu đã kết thúc. Gói tập của bạn tiếp tục từ hôm nay.</div>{% endif %}
+    <section class="info-card" style="text-align:left">
+      <div class="kv"><span>Họ tên</span><b>{{ kq.ho_ten }}</b></div>
+      <div class="kv"><span>Gói tập</span><b>{{ kq.goi }}</b></div>
+      <div class="kv"><span>Số ngày còn lại</span><b>{{ kq.so_ngay }} ngày</b></div>
+      <div class="kv"><span>Thời gian</span><b>{{ kq.gio_checkin }}</b></div>
+    </section>
+  </main>
+  <div class="footer-actions"><button type="submit" class="btn btn-primary btn-block">Đóng</button></div>
+  {% else %}
+  <main class="content has-footer" style="padding-top:80px;text-align:center">
+    <svg style="width:96px;height:96px;margin:0 auto 12px" viewBox="0 0 64 64" fill="none" stroke="#8D2C26" stroke-width="5" stroke-linecap="round"><circle cx="32" cy="32" r="28"/><path d="M32 18v18"/><circle cx="32" cy="45" r="1.5" fill="#8D2C26"/></svg>
+    {% if yc.trangThai == 'Lỗi hệ thống' %}
+    <h2 class="kq-title">Có lỗi xảy ra. Vui lòng thử lại</h2>
+    {% else %}
+    <h2 class="kq-title">Check-in không thành công</h2>
+    <p class="note" style="font-size:15px;margin:0 16px 16px">{% if yc.trangThai == 'Hủy - hết hạn' %}Gói tập của bạn đã hết hạn. Vui lòng liên hệ quản lý để được hỗ trợ.{% else %}Yêu cầu check-in đã bị quản lý hủy. Vui lòng liên hệ quầy để được hỗ trợ.{% endif %}</p>
+    <section class="info-card" style="text-align:left">
+      <div class="kv"><span>Họ tên</span><b>{{ kq.ho_ten }}</b></div>
+      <div class="kv"><span>Gói tập</span><b>{{ kq.goi }}</b></div>
+      <div class="kv"><span>Số ngày còn lại</span><b>{{ kq.so_ngay }}</b></div>
+      <div class="kv" style="align-items:center"><span>Trạng thái</span><span class="tag {% if kq.tt_goi == 'Còn hạn' %}tag-green{% elif kq.tt_goi == 'Đang bảo lưu' %}tag-amber{% else %}tag-red{% endif %}">{% if yc.trangThai == 'Hủy - hết hạn' %}Hết hạn{% else %}{{ kq.tt_goi }}{% endif %}</span></div>
+    </section>
+    {% endif %}
+  </main>
+  <div class="footer-actions"><button type="submit" class="btn btn-primary btn-block">Đóng</button></div>
+  {% endif %}
+</form>
+{% endblock %}

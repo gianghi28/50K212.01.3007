@@ -1,0 +1,45 @@
+{% extends "app_base.html" %}
+{% load ui %}
+{% block title %}Quản lý hội viên{% endblock %}
+{% block page %}
+<h1 class="page-title">Quản lý hội viên</h1>
+<main class="content">
+  <form method="get" class="search" id="form-tim" autocomplete="off">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input class="input" type="search" name="q" value="{{ q }}" placeholder="Tìm kiếm hội viên" id="o-tim" data-goi-y="{% url 'goi_y_hoi_vien' %}">
+    <div class="suggest" id="goi-y" hidden></div>
+  </form>
+  <div class="btn-row" style="margin-top:12px">
+    <a class="btn btn-primary" href="{% url 'hoi_vien_them' %}">+ Thêm</a>
+    <a class="btn btn-outline" href="{% url 'hoi_vien_xoa' %}">Xóa</a>
+  </div>
+
+  {% if ds %}
+  <div class="list-gap">
+    {% for hv in ds %}
+    <a class="card member-card" href="{% url 'hoi_vien_chi_tiet' hv.pk %}">
+      <div class="row">
+        {% include "partials/avatar.html" %}
+        <div class="grow">
+          <div class="name">{{ hv.hoTen }}</div>
+          {% with dk=hv.dang_ky_hien_tai %}<div class="sub">{% if hv.da_chuyen_nhuong_het %}Không còn gói tập{% elif dk %}{{ dk.goiTap|ten_goi }}{% else %}Chưa có gói{% endif %}</div>{% endwith %}
+        </div>
+        {% include "partials/tag_trang_thai.html" %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% elif q %}
+  <div class="empty" style="margin-top:60px">
+    <h3>Không tìm thấy hội viên</h3>
+    <p>Hãy thử tên hoặc số điện thoại khác.</p>
+  </div>
+  {% else %}
+  <div class="empty" style="margin-top:70px">
+    <div class="empty-avatar"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+    <h3>Chưa có hội viên nào</h3>
+    <p>Bấm "+ Thêm" để thêm hội viên đầu tiên.</p>
+  </div>
+  {% endif %}
+</main>
+{% endblock %}

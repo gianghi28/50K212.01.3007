@@ -1,0 +1,50 @@
+{% extends "taikhoan/base.html" %}
+{% block title %}Xác minh{% endblock %}
+{% block page %}
+<h1 class="page-title auth-title">Xác minh</h1>
+<main class="content">
+  <form method="post" novalidate id="form-otp">
+    {% csrf_token %}
+    <h2 class="auth-h2">Nhập mã xác minh</h2>
+    <p class="auth-sub">Mã gồm 6 chữ số đã được gửi tới {{ kenh }}. Vui lòng kiểm tra và nhập mã.</p>
+    <div class="otp {% if loi %}is-error{% endif %}">
+      {% for i in "123456" %}<input name="so" inputmode="numeric" maxlength="1" autocomplete="one-time-code" {% if forloop.first %}autofocus{% endif %}>{% endfor %}
+    </div>
+    {% if loi %}<p class="err">{{ loi }}</p>{% endif %}
+    <p class="resend" id="resend" data-con="{{ con_cho }}">Chưa nhận được mã?
+      <button type="submit" name="gui_lai" value="1" class="resend-btn" id="btn-gui-lai" formnovalidate>Gửi lại</button>
+      <span id="dem">sau <b id="dem-so"></b></span></p>
+    <button type="submit" class="btn btn-primary btn-block">Xác nhận</button>
+    <a class="link-btn" style="text-align:center" href="{% url 'login' %}">Quay lại đăng nhập</a>
+  </form>
+</main>
+{% endblock %}
+{% block js %}
+<script>
+(function () {
+  var o = document.querySelectorAll(".otp input");
+  o.forEach(function (inp, i) {
+    inp.addEventListener("input", function () {
+      inp.value = inp.value.replace(/\D/g, "").slice(-1);
+      if (inp.value && o[i + 1]) o[i + 1].focus();
+      if (Array.prototype.every.call(o, function (x) { return x.value; })) document.getElementById("form-otp").requestSubmit();
+    });
+    inp.addEventListener("keydown", function (e) { if (e.key === "Backspace" && !inp.value && o[i - 1]) o[i - 1].focus(); });
+    inp.addEventListener("paste", function (e) {
+      var t = (e.clipboardData.getData("text") || "").replace(/\D/g, "").slice(0, 6);
+      if (!t) return; e.preventDefault();
+      t.split("").forEach(function (c, k) { if (o[k]) o[k].value = c; });
+      if (t.length === 6) document.getElementById("form-otp").requestSubmit();
+    });
+  });
+  var con = parseInt(document.getElementById("resend").dataset.con, 10), btn = document.getElementById("btn-gui-lai");
+  function tick() {
+    if (con <= 0) { btn.disabled = false; document.getElementById("dem").hidden = true; return; }
+    btn.disabled = true;
+    document.getElementById("dem-so").textContent = "0" + Math.floor(con / 60) + ":" + String(con % 60).padStart(2, "0");
+    con--; setTimeout(tick, 1000);
+  }
+  tick();
+})();
+</script>
+{% endblock %}

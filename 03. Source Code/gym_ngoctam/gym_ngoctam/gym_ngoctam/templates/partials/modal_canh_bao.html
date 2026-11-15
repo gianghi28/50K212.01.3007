@@ -1,0 +1,9 @@
+{# Hộp thoại cảnh báo (dấu ! vàng) – noi_dung, link_dong (bỏ trống thì chỉ đóng hộp thoại) #}
+<div class="overlay">
+  <div class="modal">
+    <div class="warn-icon">!</div>
+    <h3>{{ noi_dung }}</h3>
+    {% if link_dong %}<a class="btn btn-primary btn-block" href="{{ link_dong }}" style="margin-top:10px">Đóng</a>
+    {% else %}<button type="button" class="btn btn-primary btn-block" data-close style="margin-top:10px">Đóng</button>{% endif %}
+  </div>
+</div>

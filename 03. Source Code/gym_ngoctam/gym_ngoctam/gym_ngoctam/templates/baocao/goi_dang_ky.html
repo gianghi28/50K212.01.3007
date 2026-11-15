@@ -1,0 +1,40 @@
+{% extends "app_base.html" %}
+{% block title %}Số lượng gói tập được đăng ký{% endblock %}
+{% block page %}
+<h1 class="page-title">Số lượng gói tập được đăng ký</h1>
+<main class="content has-footer">
+  <form method="get">
+    <p class="filter-label" style="margin-top:0">Từ ngày</p>
+    <div class="pill-row">
+      <select class="pill {% if loi %}is-error{% endif %}" name="tu_d" data-sheet="Ngày"><option value="">DD</option>{% for o in ngay_opts %}<option {% if o == g.tu_d %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+      <select class="pill {% if loi %}is-error{% endif %}" name="tu_m" data-sheet="Tháng"><option value="">MM</option>{% for o in thang_opts2 %}<option {% if o == g.tu_m %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+      <select class="pill {% if loi %}is-error{% endif %}" name="tu_y" data-sheet="Năm"><option value="">YYYY</option>{% for o in nam_opts %}<option {% if o == g.tu_y %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+    </div>
+    <p class="filter-label">Đến ngày</p>
+    <div class="pill-row">
+      <select class="pill {% if loi %}is-error{% endif %}" name="den_d" data-sheet="Ngày"><option value="">DD</option>{% for o in ngay_opts %}<option {% if o == g.den_d %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+      <select class="pill {% if loi %}is-error{% endif %}" name="den_m" data-sheet="Tháng"><option value="">MM</option>{% for o in thang_opts2 %}<option {% if o == g.den_m %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+      <select class="pill {% if loi %}is-error{% endif %}" name="den_y" data-sheet="Năm"><option value="">YYYY</option>{% for o in nam_opts %}<option {% if o == g.den_y %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px;height:46px">Lọc</button>
+  </form>
+  {% if loi %}<div class="alert-red">{{ loi }}</div>
+  {% elif not loi_he_thong %}
+    <p class="range-line">{{ tu|date:"d/m/Y" }} – {{ den|date:"d/m/Y" }}</p>
+    <section class="info-card chart-card" style="margin-top:0">
+      <div class="chart-head"><b>Số lượng theo gói tập</b><span>Tổng: {{ tong }}</span></div>
+      {% include "partials/bieu_do.html" %}
+    </section>
+    {% if tong %}
+    <section class="info-card" style="margin-top:14px">
+      <div class="kv"><span>Đăng ký nhiều nhất</span><b>{{ nhieu_nhat.ten_day_du }} · {{ nhieu_nhat.gia_tri }}</b></div>
+      <div class="kv"><span>Đăng ký ít nhất</span><b>{{ it_nhat.ten_day_du }} · {{ it_nhat.gia_tri }}</b></div>
+    </section>
+    {% else %}
+    <p class="note" style="text-align:center;margin-top:12px">Không có gói tập nào được đăng ký trong khoảng thời gian đã chọn</p>
+    {% endif %}
+  {% endif %}
+</main>
+{% include "partials/nut_xuat.html" with khoa=loi %}
+{% endblock %}
+{% block modals %}{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}{% endblock %}

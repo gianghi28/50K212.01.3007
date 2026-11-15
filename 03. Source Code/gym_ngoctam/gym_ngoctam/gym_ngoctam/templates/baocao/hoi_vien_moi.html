@@ -1,0 +1,17 @@
+{% extends "app_base.html" %}
+{% block title %}Hội viên mới theo tháng{% endblock %}
+{% block page %}
+<h1 class="page-title">Hội viên mới theo tháng</h1>
+<main class="content has-footer">
+  {% include "partials/loc_thang.html" %}
+  {% if not loi and not loi_he_thong %}
+    <section class="info-card chart-card">
+      <div class="chart-head"><b>Hội viên mới</b><span>Tổng: {{ tong }}</span></div>
+      {% include "partials/bieu_do.html" %}
+    </section>
+    {% if not tong %}<p class="note" style="text-align:center;margin-top:12px">Không có hội viên mới trong khoảng thời gian đã chọn</p>{% endif %}
+  {% endif %}
+</main>
+{% include "partials/nut_xuat.html" with khoa=loi %}
+{% endblock %}
+{% block modals %}{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}{% endblock %}

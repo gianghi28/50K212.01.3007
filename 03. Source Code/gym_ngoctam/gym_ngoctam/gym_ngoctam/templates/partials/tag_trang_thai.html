@@ -1,0 +1,1 @@
+{% with tt=hv.trang_thai %}<span class="tag {% if tt == 'Còn hạn' %}tag-green{% elif tt == 'Đang bảo lưu' %}tag-amber{% else %}tag-red{% endif %}">{{ tt }}</span>{% endwith %}
