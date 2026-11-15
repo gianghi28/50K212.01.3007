@@ -1,10 +1,19 @@
+import os
+import urllib.parse
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "doi-khoa-nay-khi-dua-len-server"
-DEBUG = True
+# Trên Vercel có sẵn biến môi trường VERCEL=1
+TREN_VERCEL = bool(os.environ.get("VERCEL"))
+
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "doi-khoa-nay-khi-dua-len-server")
+DEBUG = os.environ.get("DJANGO_DEBUG", "0" if TREN_VERCEL else "1") == "1"
 ALLOWED_HOSTS = ["*"]
+# Vercel chạy HTTPS phía trước: báo cho Django biết để form (CSRF) không bị chặn
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+CSRF_TRUSTED_ORIGINS = ["https://*.vercel.app"] + [
+    o for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if o]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -45,12 +54,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+# Ở máy: SQLite (db.sqlite3). Có biến DATABASE_URL (Vercel + Neon Postgres) thì dùng Postgres.
+SQLITE = {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}
+if os.environ.get("DATABASE_URL"):
+    _u = urllib.parse.urlparse(os.environ["DATABASE_URL"])
+    _q = dict(urllib.parse.parse_qsl(_u.query))
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": _u.path.lstrip("/"),
+            "USER": urllib.parse.unquote(_u.username or ""),
+            "PASSWORD": urllib.parse.unquote(_u.password or ""),
+            "HOST": _u.hostname,
+            "PORT": _u.port or 5432,
+            "OPTIONS": {"sslmode": _q.get("sslmode", "require")},
+            "CONN_MAX_AGE": 0,
+        },
+        # Dùng cho lệnh chuyen_len_postgres: đọc dữ liệu cũ từ db.sqlite3
+        "cu": SQLITE,
     }
-}
+else:
+    DATABASES = {"default": SQLITE}
 
 AUTH_PASSWORD_VALIDATORS = []
 
@@ -60,11 +84,18 @@ USE_I18N = True
 # Lưu giờ Việt Nam trực tiếp vào DB (mở DB Browser thấy đúng giờ, không bị lệch 7 tiếng)
 USE_TZ = False
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+# Dùng Postgres (Vercel) thì ảnh hội viên lưu trong bảng TepTin; ở máy thì lưu thư mục media
+STORAGES = {
+    "default": {"BACKEND": "members.luu_tru.LuuTruCSDL" if os.environ.get("DATABASE_URL")
+                else "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
 
 # Bảng TaiKhoan trong báo cáo dùng làm tài khoản đăng nhập
 AUTH_USER_MODEL = "members.TaiKhoan"
@@ -77,14 +108,19 @@ LOGOUT_REDIRECT_URL = "login"
 
 # ---------------------------------------------------------------- Nhật ký hệ thống (logs/gym.log)
 # Ghi lại: hội viên bị tự động xóa (UC02.3 – TH2), gửi mã xác minh (UC01)
-(BASE_DIR / "logs").mkdir(exist_ok=True)
+# Trên Vercel không ghi được file nên nhật ký in ra mục Logs của Vercel.
+if TREN_VERCEL:
+    _handler = {"class": "logging.StreamHandler", "formatter": "don_gian"}
+else:
+    (BASE_DIR / "logs").mkdir(exist_ok=True)
+    _handler = {"class": "logging.FileHandler", "filename": BASE_DIR / "logs" / "gym.log",
+                "encoding": "utf-8", "formatter": "don_gian"}
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {"don_gian": {"format": "{asctime}  {levelname}  {message}", "style": "{",
                                 "datefmt": "%Y-%m-%d %H:%M:%S"}},
-    "handlers": {"file_gym": {"class": "logging.FileHandler", "filename": BASE_DIR / "logs" / "gym.log",
-                              "encoding": "utf-8", "formatter": "don_gian"}},
+    "handlers": {"file_gym": _handler},
     "loggers": {"gym": {"handlers": ["file_gym"], "level": "INFO"}},
 }
 
@@ -98,8 +134,9 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_TIMEOUT = 15
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
+# Trên Vercel: đặt 2 biến môi trường EMAIL_HOST_USER và EMAIL_HOST_PASSWORD
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 try:
     from .bi_mat import *  # noqa: F401,F403
 except ImportError:

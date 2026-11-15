@@ -5,9 +5,11 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
 from members import views_taikhoan
+from members.luu_tru import xem_tep
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("tep/<path:ten>", xem_tep, name="tep_tin"),
     path("dang-nhap/", views_taikhoan.dang_nhap, name="login"),
     path("quen-mat-khau/", views_taikhoan.quen_mat_khau, name="quen_mat_khau"),
     path("quen-mat-khau/xac-minh/", views_taikhoan.xac_minh, name="xac_minh"),

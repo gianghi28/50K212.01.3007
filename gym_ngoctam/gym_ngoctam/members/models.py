@@ -419,3 +419,16 @@ class LuotCheckin(MaTuDongMixin):
 
     def __str__(self):
         return f"{self.maLuot} - {self.hoiVien.hoTen} - {self.ketQua}"
+
+
+# ---------------------------------------------------------------- Lưu ảnh trong CSDL (khi chạy trên Vercel)
+class TepTin(models.Model):
+    """Bảng phụ lưu nội dung file ảnh hội viên. Chỉ dùng khi chạy trên Vercel (không ghi được thư mục media);
+    chạy ở máy thì ảnh vẫn lưu trong thư mục media như cũ."""
+    ten = models.CharField("Tên file", max_length=200, primary_key=True)
+    noiDung = models.BinaryField("Nội dung")
+    ngayTao = models.DateTimeField("Ngày tạo", default=timezone.now)
+
+    class Meta:
+        db_table = "TepTin"
+        verbose_name = verbose_name_plural = "Tệp tin"

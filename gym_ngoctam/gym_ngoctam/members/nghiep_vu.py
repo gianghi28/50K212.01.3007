@@ -221,7 +221,12 @@ def don_dep_neu_chua_chay_hom_nay():
     """Dự phòng khi máy không bật lịch 00:00 (hoặc chạy trên host miễn phí không có lịch):
     mỗi ngày chỉ quét 1 lần, vào lần mở danh sách hội viên đầu tiên trong ngày."""
     from django.conf import settings
-    moc = settings.BASE_DIR / "logs" / "don_dep_lan_cuoi.txt"
+    import os
+    import tempfile
+    from pathlib import Path
+    # Trên Vercel không ghi được vào thư mục web nên ghi tạm vào /tmp
+    thu_muc = Path(tempfile.gettempdir()) if os.environ.get("VERCEL") else settings.BASE_DIR / "logs"
+    moc = thu_muc / "don_dep_lan_cuoi.txt"
     hom_nay = timezone.now().date().isoformat()
     try:
         if moc.exists() and moc.read_text(encoding="utf-8").strip() == hom_nay:
