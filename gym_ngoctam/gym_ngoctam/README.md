@@ -25,3 +25,9 @@ Lần đầu tạo dữ liệu mẫu: `python manage.py seed` → đăng nhập 
 - Mã xác minh "Quên mật khẩu" được **in ra cửa sổ terminal** đang chạy server (bản demo không gửi SMS/email thật).
 - Mã QR thanh toán là mã minh họa, tạo qua api.qrserver.com (cần có mạng).
 - Xóa hội viên là xóa mềm (cột `daXoa`), dữ liệu doanh thu/lịch sử vẫn giữ.
+
+## Tự động xóa hội viên lúc 00:00 (UC02.3 – TH2)
+- Chạy tay: `python manage.py don_dep_hoi_vien`
+- Đăng ký chạy tự động 00:00 mỗi ngày (mở PowerShell ở thư mục có manage.py, chạy 1 lần):
+  `schtasks /create /tn "GymNT - Don dep hoi vien" /sc daily /st 00:00 /tr "\"$PWD\don_dep_hang_ngay.bat\""`
+- Kết quả ghi vào `logs/gym.log`. Nếu máy tắt lúc 00:00, web vẫn tự quét 1 lần vào lần đầu mở danh sách hội viên trong ngày.

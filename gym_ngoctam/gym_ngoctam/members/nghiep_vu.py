@@ -173,7 +173,9 @@ def don_dep_hoi_vien_khong_hoat_dong():
         log.exception("Dọn dẹp hội viên lỗi")
         return []
     if can_xoa:
-        log.info("Tự động xóa %d hội viên: %s", len(can_xoa), ", ".join(h.pk for h in can_xoa))
+        log.info("Tự động xóa %d hội viên: %s", len(can_xoa), ", ".join(f"{h.pk} ({h.hoTen})" for h in can_xoa))
+    else:
+        log.info("Quét dọn dẹp hội viên: không có hội viên nào cần xóa")
     return [h.pk for h in can_xoa]
 
 
@@ -213,3 +215,22 @@ def thuc_hien_chuyen_nhuong(nguoi_chuyen, nguoi_nhan):
                              soTien=0, ngayDangKy=now, ngayBatDau=now, ngayKetThuc=t["ket_thuc"],
                              soNgayCongDon=t["y"])
     return t
+
+
+def don_dep_neu_chua_chay_hom_nay():
+    """Dự phòng khi máy không bật lịch 00:00 (hoặc chạy trên host miễn phí không có lịch):
+    mỗi ngày chỉ quét 1 lần, vào lần mở danh sách hội viên đầu tiên trong ngày."""
+    from django.conf import settings
+    moc = settings.BASE_DIR / "logs" / "don_dep_lan_cuoi.txt"
+    hom_nay = timezone.now().date().isoformat()
+    try:
+        if moc.exists() and moc.read_text(encoding="utf-8").strip() == hom_nay:
+            return
+    except OSError:
+        pass
+    don_dep_hoi_vien_khong_hoat_dong()
+    try:
+        moc.parent.mkdir(exist_ok=True)
+        moc.write_text(hom_nay, encoding="utf-8")
+    except OSError:
+        pass

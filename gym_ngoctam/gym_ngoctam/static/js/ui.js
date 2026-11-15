@@ -66,10 +66,14 @@ document.querySelectorAll("[data-switch-label]").forEach(function (input) {
     ov.querySelector("h3").textContent = sel.dataset.sheet;
     var list = ov.querySelector(".picker-list");
     list.innerHTML = "";
+    var laThang = /tháng/i.test(sel.dataset.sheet), laNgay = /ngày/i.test(sel.dataset.sheet);
+    list.className = "picker-list grid" + (laNgay ? " cols-7" : "");
     Array.prototype.forEach.call(sel.options, function (o) {
       if (o.value === "") return;
       var b = document.createElement("button");
-      b.type = "button"; b.textContent = o.text; b.dataset.v = o.value;
+      b.type = "button"; b.dataset.v = o.value;
+      // Ô tháng hiện "Tháng 1" ... "Tháng 12" như Figma
+      b.textContent = laThang ? "Tháng " + parseInt(o.text.replace(/\D/g, ""), 10) : o.text;
       if (o.value === val) b.className = "on";
       b.addEventListener("click", function () {
         val = o.value;

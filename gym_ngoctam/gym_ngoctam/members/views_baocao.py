@@ -60,6 +60,23 @@ def _bo_loc_thang():
     return {"nam_opts": list(range(nam_nay, nam_nay - 5, -1)), "thang_opts": list(range(1, 13))}
 
 
+def _ba_thang_gan_nhat():
+    """3 tháng gần nhất tính đến tháng hiện tại, cũ → mới. VD tháng 11/2026 → [(2026,9),(2026,10),(2026,11)]."""
+    now = timezone.now()
+    y, m, ds = now.year, now.month, []
+    for _ in range(3):
+        ds.insert(0, (y, m))
+        y, m = (y - 1, 12) if m == 1 else (y, m - 1)
+    return ds
+
+
+def _mac_dinh_bo_loc(thang):
+    """Giá trị hiện trên 3 ô Năm/Từ/Đến khi chưa lọc (nếu 3 tháng cùng 1 năm)."""
+    if thang[0][0] == thang[-1][0]:
+        return thang[0][0], thang[0][1], thang[-1][1]
+    return timezone.now().year, None, None
+
+
 @login_required
 def bao_cao_chinh(request):
     return render(request, "baocao/chinh.html", MENU)
@@ -74,20 +91,17 @@ def _du_lieu_doanh_thu(g):
         if loi:
             return None, nam, tu, den, True
         thang = [(nam, m) for m in range(tu, den + 1)]
-    else:  # mặc định 12 tháng gần nhất tính đến tháng hiện tại
-        thang = []
-        y, m = now.year, now.month
-        for _ in range(12):
-            thang.insert(0, (y, m))
-            y, m = (y - 1, 12) if m == 1 else (y, m - 1)
-        nam, tu, den = now.year, None, None
+    else:  # mặc định: 3 tháng gần nhất
+        thang = _ba_thang_gan_nhat()
+        nam, tu, den = _mac_dinh_bo_loc(thang)
+    cung_nam = thang[0][0] == thang[-1][0]
     cot = []
     for y, m in thang:
         dau = datetime(y, m, 1)
         cuoi = datetime(y + (m == 12), m % 12 + 1, 1)
         tong = (ThanhToan.objects.filter(trangThai=ThanhToan.TrangThai.THANH_CONG, thoiGian__gte=dau,
                                          thoiGian__lt=min(cuoi, now)).aggregate(s=Sum("soTien"))["s"] or 0)
-        nhan = f"T{m}" if co_loc else f"T{m}/{str(y)[2:]}"
+        nhan = f"T{m}" if cung_nam else f"T{m}/{str(y)[2:]}"
         cot.append(_cot(nhan, int(tong), _gon(tong)))
         cot[-1]["ten_day_du"] = f"Tháng {m}/{y}"
     return cot, nam, tu, den, False
@@ -118,24 +132,32 @@ def doanh_thu(request):
 @login_required
 def hoi_vien_moi(request):
     now = timezone.now()
-    ctx = {**MENU, **_bo_loc_thang(), "g": request.GET, "loi_he_thong": False}
-    nam, tu, den, loi = _thang_trong_nam(request.GET, 1, now.month)
+    g = request.GET
+    ctx = {**MENU, **_bo_loc_thang(), "g": g, "loi_he_thong": False}
+    if g.get("loc"):
+        nam, tu, den, loi = _thang_trong_nam(g, 1, 12)
+        thang = [(nam, m) for m in range(tu, den + 1)] if not loi else []
+    else:  # mặc định: 3 tháng gần nhất
+        thang, loi = _ba_thang_gan_nhat(), False
+        nam, tu, den = _mac_dinh_bo_loc(thang)
     ctx.update(nam=nam, tu=tu, den=den, loi=LOI_KHOANG if loi else "")
     if not loi:
+        cung_nam = thang[0][0] == thang[-1][0]
         try:
             cot = []
-            for m in range(tu, den + 1):
-                so = HoiVien.tat_ca.filter(ngayTao__year=nam, ngayTao__month=m, ngayTao__lte=now).count()
-                cot.append(_cot(f"T{m}", so))
+            for y, m in thang:
+                so = HoiVien.tat_ca.filter(ngayTao__year=y, ngayTao__month=m, ngayTao__lte=now).count()
+                c = _cot(f"T{m}" if cung_nam else f"T{m}/{str(y)[2:]}", so)
+                c["ten_day_du"] = f"Tháng {m}/{y}"
+                cot.append(c)
         except DatabaseError:
             ctx["loi_he_thong"] = True
             return render(request, "baocao/hoi_vien_moi.html", ctx)
         tong = sum(c["gia_tri"] for c in cot)
         ctx.update(cot=_them_chieu_cao(cot), tong=tong)
-        if request.GET.get("xuat"):
+        if g.get("xuat"):
             return _xuat("hoi_vien_moi_theo_thang", ["Tháng", "Hội viên mới"],
-                         [[f"Tháng {c['nhan'][1:]}/{nam}", c["gia_tri"]] for c in cot] + [["Tổng", tong]],
-                         "Hội viên mới")
+                         [[c["ten_day_du"], c["gia_tri"]] for c in cot] + [["Tổng", tong]], "Hội viên mới")
     return render(request, "baocao/hoi_vien_moi.html", ctx)
 
 

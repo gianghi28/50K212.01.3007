@@ -38,7 +38,7 @@ def _goi_json(hv=None):
 @login_required
 def hoi_vien_list(request):
     ket_thuc_bao_luu_het_han()
-    nv.don_dep_hoi_vien_khong_hoat_dong()
+    nv.don_dep_neu_chua_chay_hom_nay()
     q = request.GET.get("q", "").strip()
     qs = HoiVien.objects.all()
     if q:

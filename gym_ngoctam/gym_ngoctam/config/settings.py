@@ -74,3 +74,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "hoi_vien_list"
 LOGOUT_REDIRECT_URL = "login"
+
+# ---------------------------------------------------------------- Nhật ký hệ thống (logs/gym.log)
+# Ghi lại: hội viên bị tự động xóa (UC02.3 – TH2), gửi mã xác minh (UC01)
+(BASE_DIR / "logs").mkdir(exist_ok=True)
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {"don_gian": {"format": "{asctime}  {levelname}  {message}", "style": "{",
+                                "datefmt": "%Y-%m-%d %H:%M:%S"}},
+    "handlers": {"file_gym": {"class": "logging.FileHandler", "filename": BASE_DIR / "logs" / "gym.log",
+                              "encoding": "utf-8", "formatter": "don_gian"}},
+    "loggers": {"gym": {"handlers": ["file_gym"], "level": "INFO"}},
+}

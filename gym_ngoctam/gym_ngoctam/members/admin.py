@@ -49,5 +49,13 @@ class LuotCheckinAdmin(admin.ModelAdmin):
 
 @admin.register(TaiKhoan)
 class TaiKhoanAdmin(admin.ModelAdmin):
+    """Hệ thống chỉ có đúng 1 tài khoản quản lý: không cho thêm tài khoản thứ hai, không cho xóa."""
     list_display = ("tenDangNhap", "email", "soDienThoai")
-    exclude = ("password",)
+    fields = ("tenDangNhap", "email", "soDienThoai")
+    readonly_fields = ("tenDangNhap",)  # đổi tên đăng nhập bằng lệnh: python manage.py doi_ten_dang_nhap
+
+    def has_add_permission(self, request):
+        return not TaiKhoan.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False
