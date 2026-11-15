@@ -59,13 +59,13 @@
 
     {% if not dang_bao_luu %}
     <div class="amber-box" id="box-bao-luu" style="margin-top:14px" {% if not tick or loi_bao_luu %}hidden{% endif %}>
-      <div class="kv"><span>Thời hạn bảo lưu (theo gói):</span><b>{{ bao_luu_so_ngay }} ngày</b></div>
+      <div class="kv"><span>Thời hạn bảo lưu (theo gói):</span><b>{% if bao_luu_so_ngay > 0 %}{{ bao_luu_so_ngay }} ngày{% else %}0{% endif %}</b></div>
       <div class="kv"><span>Bảo lưu đến ngày:</span><b>{{ bao_luu_den|date:"d/m/Y" }}</b></div>
       <p class="note">Hệ thống tự động tính theo gói đã đăng ký</p>
     </div>
     {% else %}
     <div class="amber-box" id="box-ket-thuc" style="margin-top:14px" {% if tick %}hidden{% endif %}>
-      <div class="kv"><span>Số ngày bảo lưu đã dùng:</span><b>{{ da_dung }} ngày</b></div>
+      <div class="kv"><span>Số ngày bảo lưu đã dùng:</span><b>{% if da_dung > 0 %}{{ da_dung }} ngày{% else %}0{% endif %}</b></div>
       <div class="kv"><span>Ngày kết thúc mới:</span><b>{{ ket_thuc_moi|date:"d/m/Y" }}</b></div>
     </div>
     {% endif %}

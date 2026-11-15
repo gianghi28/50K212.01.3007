@@ -140,7 +140,7 @@ function locDanhSach(inputId, listId, emptyId) {
   function dem() {
     var n = f.querySelectorAll("input[name=chon]:checked").length;
     document.getElementById("dem-chon").textContent = n;
-    btn.textContent = "Xóa (" + n + ")";
+    btn.textContent = n ? "Xóa (" + n + ")" : "Xóa";
     btn.disabled = n === 0;
     f.querySelectorAll(".pick-card").forEach(function (c) { c.classList.toggle("is-picked", c.querySelector("input").checked); });
     document.getElementById("xoa-tieu-de").textContent = "Xóa " + n + " hội viên?";

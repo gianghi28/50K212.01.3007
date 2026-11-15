@@ -16,7 +16,7 @@
       {% if bl %}
       <div class="kv"><span>Bảo lưu đến ngày</span><b>{{ bl.ngayKetThuc|date:"d/m/Y" }}</b></div>
       {% else %}
-      <div class="kv"><span>Số ngày còn lại</span><b>{% if het_han %}0{% else %}{{ hv.so_ngay_con_lai }} ngày{% endif %}</b></div>
+      <div class="kv"><span>Số ngày còn lại</span><b>{% if het_han %}0{% else %}{% if hv.so_ngay_con_lai > 0 %}{{ hv.so_ngay_con_lai }} ngày{% else %}0{% endif %}{% endif %}</b></div>
       {% endif %}
       <div class="kv" style="align-items:center"><span>Trạng thái</span>{% if het_han %}<span class="tag tag-red">Hết hạn</span>{% else %}{% include "partials/tag_trang_thai.html" %}{% endif %}</div>
     </section>

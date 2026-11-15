@@ -6,7 +6,7 @@
   <div class="btn-row">
     <a class="btn btn-outline" href="{% url 'checkin_loc' %}?{{ qs }}">Lọc</a>
     {% if ds %}<a class="btn btn-outline" href="{% url 'checkin_xuat_excel' %}?{{ qs }}" id="btn-excel">Xuất Excel</a>
-    {% else %}<button type="button" class="btn btn-outline" disabled>Xuất Excel</button>{% endif %}
+    {% else %}<button type="button" class="btn btn-khoa" disabled>Xuất Excel</button>{% endif %}
   </div>
   {% if not loi_he_thong %}
   <p class="range-line">{{ tu|date:"d/m/Y" }} – {{ den|date:"d/m/Y" }} · {{ ds|length }} lượt</p>
@@ -24,9 +24,8 @@
   </div>
   {% empty %}
   {% if not loi_he_thong %}
-  <div class="empty" style="margin-top:50px">
+  <div class="empty" style="margin-top:40px">
     <h3>Không có lượt check-in phù hợp</h3>
-    <p>Hãy thử chọn khoảng thời gian hoặc từ khóa khác.</p>
   </div>
   {% endif %}
   {% endfor %}

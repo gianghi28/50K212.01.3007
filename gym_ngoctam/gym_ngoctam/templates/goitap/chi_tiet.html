@@ -8,7 +8,7 @@
     <h2>{{ goi|ten_goi }}</h2>
     <div class="info-line"><span>Giá</span><b>{{ goi.gia|vnd }} VNĐ</b></div>
     <div class="info-line"><span>Thời hạn</span><b>{{ goi.thoiHan }} ngày</b></div>
-    <div class="info-line"><span>Thời hạn bảo lưu</span><b>{{ goi.thoiHanBaoLuu|default:0 }} ngày</b></div>
+    <div class="info-line"><span>Thời hạn bảo lưu</span><b>{% if goi.thoiHanBaoLuu %}{{ goi.thoiHanBaoLuu }} ngày{% else %}0{% endif %}</b></div>
     <div class="info-line"><span>Trạng thái</span><b>{{ goi.trangThaiBan }}</b></div>
     <div class="info-line"><span>Hội viên đang đăng ký</span><b>{{ so_dang_dung }}</b></div>
   </section>

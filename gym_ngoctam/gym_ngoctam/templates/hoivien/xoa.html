@@ -27,14 +27,13 @@
       </label>
       {% endfor %}
     </div>
-    <div class="empty" id="xoa-rong" style="margin-top:60px" {% if ds %}hidden{% endif %}>
+    <div class="empty" id="xoa-rong" style="margin-top:80px" {% if ds %}hidden{% endif %}>
       <h3>Không tìm thấy hội viên</h3>
-      <p>Hãy thử từ khóa khác.</p>
     </div>
   </main>
   <div class="footer-actions btn-row">
     <a class="btn btn-outline" href="{% url 'hoi_vien_list' %}">Hủy</a>
-    <button type="button" class="btn btn-danger" id="btn-xoa" disabled>Xóa (0)</button>
+    <button type="button" class="btn btn-danger" id="btn-xoa" disabled>Xóa</button>
   </div>
 
   <div class="overlay" id="modal-xoa" hidden>

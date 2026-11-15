@@ -2,7 +2,7 @@
 {% block title %}Số lượng gói tập được đăng ký{% endblock %}
 {% block page %}
 <h1 class="page-title">Số lượng gói tập được đăng ký</h1>
-<main class="content has-footer">
+<main class="content has-footer{% if not loi and not loi_he_thong and not tong %} has-alert{% endif %}">
   <form method="get">
     <p class="filter-label" style="margin-top:0">Từ ngày</p>
     <div class="pill-row">
@@ -22,19 +22,20 @@
   {% elif not loi_he_thong %}
     <p class="range-line">{{ tu|date:"d/m/Y" }} – {{ den|date:"d/m/Y" }}</p>
     <section class="info-card chart-card" style="margin-top:0">
-      <div class="chart-head"><b>Số lượng theo gói tập</b><span>Tổng: {{ tong }}</span></div>
+      <div class="chart-head"><b>Số lượng theo gói tập</b></div>
       {% include "partials/bieu_do.html" %}
     </section>
-    {% if tong %}
     <section class="info-card" style="margin-top:14px">
+      {% if tong %}
       <div class="kv"><span>Đăng ký nhiều nhất</span><b>{{ nhieu_nhat.ten_day_du }} · {{ nhieu_nhat.gia_tri }}</b></div>
       <div class="kv"><span>Đăng ký ít nhất</span><b>{{ it_nhat.ten_day_du }} · {{ it_nhat.gia_tri }}</b></div>
+      {% else %}
+      <div class="kv"><span>Đăng ký nhiều nhất</span><b>– · 0</b></div>
+      <div class="kv"><span>Đăng ký ít nhất</span><b>– · 0</b></div>
+      {% endif %}
     </section>
-    {% else %}
-    <p class="note" style="text-align:center;margin-top:12px">Không có gói tập nào được đăng ký trong khoảng thời gian đã chọn</p>
-    {% endif %}
   {% endif %}
 </main>
-{% include "partials/nut_xuat.html" with khoa=loi %}
+{% if not loi and not loi_he_thong and not tong %}{% include "partials/nut_xuat.html" with khoa=loi canh_bao="Không có gói tập nào được đăng ký trong khoảng thời gian đã chọn" %}{% else %}{% include "partials/nut_xuat.html" with khoa=loi %}{% endif %}
 {% endblock %}
 {% block modals %}{% if loi_he_thong %}{% include "partials/modal_loi.html" %}{% endif %}{% endblock %}

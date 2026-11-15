@@ -30,7 +30,7 @@
     <section class="info-card" style="text-align:left">
       <div class="kv"><span>Họ tên</span><b>{{ kq.ho_ten }}</b></div>
       <div class="kv"><span>Gói tập</span><b>{{ kq.goi }}</b></div>
-      <div class="kv"><span>Số ngày còn lại</span><b>{{ kq.so_ngay }} ngày</b></div>
+      <div class="kv"><span>Số ngày còn lại</span><b>{% if kq.so_ngay > 0 %}{{ kq.so_ngay }} ngày{% else %}0{% endif %}</b></div>
       <div class="kv"><span>Thời gian</span><b>{{ kq.gio_checkin }}</b></div>
     </section>
   </main>

@@ -13,7 +13,7 @@
     {% if bl %}
     <div class="kv"><span>Bảo lưu đến ngày</span><b>{{ bl.ngayKetThuc|date:"d/m/Y" }}</b></div>
     {% else %}
-    <div class="kv"><span>Số ngày còn lại</span><b {% if hv.so_ngay_con_lai <= 0 %}style="color:var(--error)"{% endif %}>{{ hv.so_ngay_con_lai }} ngày</b></div>
+    <div class="kv"><span>Số ngày còn lại</span><b {% if hv.so_ngay_con_lai <= 0 %}style="color:var(--error)"{% endif %}>{% if hv.so_ngay_con_lai > 0 %}{{ hv.so_ngay_con_lai }} ngày{% else %}0{% endif %}</b></div>
     <div class="kv"><span>Bảo lưu</span><b>{% if hv.da_dung_quyen_bao_luu %}Đã dùng quyền bảo lưu{% else %}Chưa bảo lưu{% endif %}</b></div>
     {% endif %}
     <div class="kv" style="align-items:center"><span>Trạng thái</span>{% include "partials/tag_trang_thai.html" %}</div>

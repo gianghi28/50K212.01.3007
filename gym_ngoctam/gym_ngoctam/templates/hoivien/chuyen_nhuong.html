@@ -8,7 +8,7 @@
     <section class="info-card">
       <div class="kv"><span>Người chuyển</span><b>{{ nc.hoTen }}</b></div>
       <div class="kv"><span>Gói chuyển nhượng</span><b>{{ dk.goiTap|ten_goi }}</b></div>
-      <div class="kv"><span>Số ngày còn lại</span><b>{{ nc.so_ngay_con_lai }} ngày</b></div>
+      <div class="kv"><span>Số ngày còn lại</span><b>{% if nc.so_ngay_con_lai > 0 %}{{ nc.so_ngay_con_lai }} ngày{% else %}0{% endif %}</b></div>
     </section>
     <div class="search" style="margin-top:14px">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
@@ -29,9 +29,8 @@
       </label>
       {% endfor %}
     </div>
-    <div class="empty" id="cn-rong" style="margin-top:40px" {% if ds %}hidden{% endif %}>
+    <div class="empty" id="cn-rong" style="margin-top:26px" {% if ds %}hidden{% endif %}>
       <h3>Không tìm thấy hội viên</h3>
-      <p>Hãy nhập tên hoặc số điện thoại khác.</p>
     </div>
   </main>
   <div class="footer-actions btn-row">

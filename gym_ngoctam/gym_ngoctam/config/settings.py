@@ -87,3 +87,21 @@ LOGGING = {
                               "encoding": "utf-8", "formatter": "don_gian"}},
     "loggers": {"gym": {"handlers": ["file_gym"], "level": "INFO"}},
 }
+
+# ---------------------------------------------------------------- Gửi mã xác minh qua Gmail (UC01)
+# Tạo file config/bi_mat.py (KHÔNG đưa lên GitHub) với 2 dòng:
+#   EMAIL_HOST_USER = "tengmail@gmail.com"
+#   EMAIL_HOST_PASSWORD = "mat khau ung dung 16 ky tu"
+# Chưa có file này thì mã chỉ được in ra terminal như trước.
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_TIMEOUT = 15
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+try:
+    from .bi_mat import *  # noqa: F401,F403
+except ImportError:
+    pass
+DEFAULT_FROM_EMAIL = f"Phòng Gym NT <{EMAIL_HOST_USER}>" if EMAIL_HOST_USER else "webmaster@localhost"

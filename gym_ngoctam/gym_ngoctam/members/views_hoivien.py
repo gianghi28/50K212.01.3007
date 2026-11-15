@@ -1,4 +1,5 @@
 """UC02 – Quản lý hội viên: danh sách, chi tiết, thêm (02.1), chỉnh sửa (02.2 + 02.5 + 02.6), thanh toán (02.7)."""
+import logging
 import os
 from datetime import timedelta
 
@@ -197,6 +198,7 @@ def thanh_toan(request):
                     hv.save(update_fields=["hoTen", "soDienThoai"])
                 nv.ghi_nhan_dang_ky(hv, goi, hinh_thuc, ctx["nhan_vien"])
         except (DatabaseError, IntegrityError, OSError):
+            logging.getLogger("gym").exception("Lỗi lưu thanh toán gói tập")
             ctx["loi_he_thong"] = True
         else:
             del request.session[SESSION_KEY]

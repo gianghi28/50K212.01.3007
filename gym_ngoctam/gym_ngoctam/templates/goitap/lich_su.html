@@ -45,8 +45,8 @@
           <span class="tag {% if dk.loai == 'Chuyển nhượng đi' or dk.loai == 'Nhận chuyển nhượng' %}tag-amber{% else %}tag-green{% endif %}">{{ dk.loai }}</span>
         </div>
         <div class="history-line">
-          {% if dk.loai == 'Chuyển nhượng đi' %}{{ dk.goiTap|ten_goi }} · {{ dk.soNgayCongDon|default:0 }} ngày → {{ dk.ten_doi_ung }}
-          {% elif dk.loai == 'Nhận chuyển nhượng' %}{{ dk.soNgayCongDon|default:0 }} ngày ← {{ dk.ten_doi_ung }}
+          {% if dk.loai == 'Chuyển nhượng đi' %}{{ dk.goiTap|ten_goi }} · {% if dk.soNgayCongDon %}{{ dk.soNgayCongDon }} ngày{% else %}0{% endif %} → {{ dk.ten_doi_ung }}
+          {% elif dk.loai == 'Nhận chuyển nhượng' %}{% if dk.soNgayCongDon %}{{ dk.soNgayCongDon }} ngày{% else %}0{% endif %} ← {{ dk.ten_doi_ung }}
           {% else %}{{ dk.goiTap|ten_goi }} · {{ dk.ngayDangKy|date:"H:i, d/m/Y" }}{% endif %}
         </div>
       </div>

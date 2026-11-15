@@ -21,13 +21,13 @@
       {% if t.con_han %}
       <div class="kv"><span>Gói chuyển nhượng</span><b>{{ t.goi_chuyen|ten_goi }}</b></div>
       <div class="kv"><span>Gói của người nhận</span><b>{{ t.goi_nhan|ten_goi }} (giữ nguyên)</b></div>
-      <div class="kv"><span>Số ngày hiện có</span><b>{{ t.x }} ngày</b></div>
-      <div class="kv"><span>Số ngày chuyển</span><b>{{ t.y }} ngày</b></div>
+      <div class="kv"><span>Số ngày hiện có</span><b>{% if t.x > 0 %}{{ t.x }} ngày{% else %}0{% endif %}</b></div>
+      <div class="kv"><span>Số ngày chuyển</span><b>{% if t.y > 0 %}{{ t.y }} ngày{% else %}0{% endif %}</b></div>
       <div class="kv"><span>Tổng số ngày</span><b>{{ t.x }} + {{ t.y }} = {{ t.tong }} ngày</b></div>
       <div class="kv"><span>Ngày kết thúc mới</span><b>{{ t.ket_thuc|date:"d/m/Y" }}</b></div>
       {% else %}
       <div class="kv"><span>Gói tập được cấp</span><b>{{ t.goi_chuyen|ten_goi }}</b></div>
-      <div class="kv"><span>Số ngày chuyển nhượng</span><b>{{ t.y }} ngày</b></div>
+      <div class="kv"><span>Số ngày chuyển nhượng</span><b>{% if t.y > 0 %}{{ t.y }} ngày{% else %}0{% endif %}</b></div>
       <div class="kv"><span>Ngày kết thúc</span><b>{{ t.ket_thuc|date:"d/m/Y" }}</b></div>
       {% endif %}
     </section>

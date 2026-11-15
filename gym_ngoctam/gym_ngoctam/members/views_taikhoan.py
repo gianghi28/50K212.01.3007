@@ -3,7 +3,9 @@ import logging
 import secrets
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth import authenticate, login
+from django.core.mail import send_mail
 from django.db import DatabaseError
 from django.db.models import Q
 from django.shortcuts import redirect, render
@@ -49,13 +51,25 @@ def dang_nhap(request):
 
 
 def _gui_ma(tk, kenh):
-    """Tạo và 'gửi' mã xác minh. Bản demo: in mã ra cửa sổ terminal đang chạy server."""
+    """Tạo mã xác minh và gửi về email của tài khoản quản lý.
+    Nếu chưa cấu hình Gmail (config/bi_mat.py) thì chỉ in mã ra terminal như bản demo."""
     ma = f"{secrets.randbelow(1_000_000):06d}"
     tk.maXacMinh = ma
     tk.hanMaXacMinh = timezone.now() + HIEU_LUC
     tk.save(update_fields=["maXacMinh", "hanMaXacMinh"])
-    print(f"\n===== [MÃ XÁC MINH] gửi tới {kenh}: {ma} (hiệu lực 5 phút) =====\n", flush=True)
-    log.info("Đã gửi mã xác minh tới %s", kenh)
+    print(f"\n===== [MÃ XÁC MINH] gửi tới {tk.email}: {ma} (hiệu lực 5 phút) =====\n", flush=True)
+    if settings.EMAIL_HOST_USER and tk.email:
+        try:
+            send_mail(
+                "Mã xác minh đặt lại mật khẩu - Phòng Gym NT",
+                f"Mã xác minh của bạn là: {ma}\n\nMã có hiệu lực trong 5 phút. "
+                "Nếu bạn không yêu cầu đặt lại mật khẩu, hãy bỏ qua email này.",
+                settings.DEFAULT_FROM_EMAIL, [tk.email],
+            )
+        except Exception:
+            log.exception("Gửi email mã xác minh tới %s thất bại", tk.email)
+            return
+    log.info("Đã gửi mã xác minh tới %s (yêu cầu nhập: %s)", tk.email, kenh)
 
 
 def quen_mat_khau(request):

@@ -9,10 +9,12 @@
     <input class="input" type="search" name="q" value="{{ q }}" placeholder="Tìm kiếm hội viên" id="o-tim" data-goi-y="{% url 'goi_y_hoi_vien' %}">
     <div class="suggest" id="goi-y" hidden></div>
   </form>
+  {% if ds or not q %}
   <div class="btn-row" style="margin-top:12px">
     <a class="btn btn-primary" href="{% url 'hoi_vien_them' %}">+ Thêm</a>
     <a class="btn btn-outline" href="{% url 'hoi_vien_xoa' %}">Xóa</a>
   </div>
+  {% endif %}
 
   {% if ds %}
   <div class="list-gap">
@@ -30,9 +32,10 @@
     {% endfor %}
   </div>
   {% elif q %}
-  <div class="empty" style="margin-top:60px">
+  <div class="empty" style="margin-top:110px">
+    <div class="empty-avatar empty-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></div>
     <h3>Không tìm thấy hội viên</h3>
-    <p>Hãy thử tên hoặc số điện thoại khác.</p>
+    <p>Hãy thử tìm bằng tên, số điện thoại hoặc Mã HV khác.</p>
   </div>
   {% else %}
   <div class="empty" style="margin-top:70px">

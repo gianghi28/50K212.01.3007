@@ -101,8 +101,7 @@ class HoiVien(MaTuDongMixin):
     maHV = models.CharField("Mã hội viên", max_length=10, primary_key=True)
     hoTen = models.CharField("Họ tên", max_length=100)
     soDienThoai = models.CharField(
-        "Số điện thoại", max_length=10, unique=True, validators=[sdt_validator],
-        error_messages={"unique": "Số điện thoại đã tồn tại."},
+        "Số điện thoại", max_length=10, validators=[sdt_validator],
     )
     anhDaiDien = models.ImageField("Ảnh đại diện", max_length=100, upload_to="anh_hoi_vien/", null=True, blank=True)
     ngayTao = models.DateTimeField("Ngày tạo", default=timezone.now)
@@ -115,6 +114,11 @@ class HoiVien(MaTuDongMixin):
     class Meta:
         db_table = "HoiVien"
         base_manager_name = "tat_ca"
+        # SĐT chỉ cần không trùng giữa các hội viên CHƯA bị xóa (hội viên đã xóa mềm không giữ số)
+        constraints = [
+            models.UniqueConstraint(fields=["soDienThoai"], condition=models.Q(daXoa=False),
+                                    name="uq_hoivien_sdt_chua_xoa"),
+        ]
         ordering = ["-ngayTao"]
         verbose_name = verbose_name_plural = "Hội viên"
 
